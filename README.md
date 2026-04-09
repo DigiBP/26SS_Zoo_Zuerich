@@ -96,5 +96,16 @@ Quote generation can also be automated through predefined templates and pricing 
 
 Furthermore, the CRM system can automatically generate sales performance reports and dashboards, providing management with real-time insights into sales activities and revenue forecasts.
 
-## 5.
+## 5. Current Implementation & Progress
+
+### Comparison: From Manual Inefficiency to Digital Excellence
+
+| Feature | AS-IS (Before) | TO-BE (Digitalised Improvement) |
+| :--- | :--- | :--- |
+| **Lead Registration** | Manual entry into multiple Excel files, leading to duplicates and data loss. | **Automated Service Task:** Leads are captured via API and instantly stored in a centralized CRM Database. |
+| **Lead Assignment** | Manual decision-making by managers; slow and inconsistent coordination. | **Automated Logic:** Automatic routing to sales reps based on region or industry **(DMN)**. |
+| **Consultation Booking** | Manual back-and-forth emails to find a suitable time slot. | **Smart Reminders:** System automatically decides when to send follow-ups or notify agents **(DMN)**. |
+| **Document Creation** | Manual generation of quotes/invoices using Word and Excel templates. | **Automated Workers:** Quotes are generated as PDFs with dynamic pricing rules **(DMN)**. |
+| **Communication** | Fragmented email threads with no centralized history. | **Integrated Tracking:** All customer interactions are logged directly in the CRM via Gmail/API integration. |
+| **Process Monitoring** | Weekly reports manually compiled from spreadsheets; often outdated. | **Real-Time Dashboards:** Automatic generation of sales performance reports and live revenue forecasts. |
 

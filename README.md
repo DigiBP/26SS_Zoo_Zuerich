@@ -106,7 +106,6 @@ Furthermore, the CRM system can automatically generate sales performance reports
 | **Lead Assignment** | Manual decision-making by managers; slow and inconsistent coordination. | **Automated Logic:** Automatic routing to sales reps based on region or industry **(DMN)**. |
 | **Scheduling Automation** | **Missing Stage:** There was no formal step for scheduling consultations. | **API-Driven Scheduling:** System automatically sends available slots and creates appointments in the CRM upon selection. |
 | **Reminder Automation** | **No Follow-up:** If a lead didn't respond after the initial contact, there was no structured way to re-engage them. | **Smart Follow-up Loop:** Automated 3-day **Timer Event** triggers a reminder service task based on. |
-| **Document Creation** | Manual generation of quotes/invoices using Word and Excel templates. | **Automated Workers:** Quotes are generated as PDFs with dynamic pricing rules **(thanks to Decision Table for price calculation)**. |
 | **Communication** | Fragmented email threads with no centralized history; info lost if staff is absent. | **Integrated Tracking:** All customer interactions are logged directly in the CRM via **Gmail/API integration**. |
 
 ## 6. Coaching questions

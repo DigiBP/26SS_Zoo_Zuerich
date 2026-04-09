@@ -143,9 +143,10 @@ Decision table? -> saved to the database through Camunda (task in between regist
 Automatic send of an email to choose the availability (third-party ready service(calendly)) 
 
 4) Automation Opportunity 4: Form of unified question(to be created) that is filled by Lead to fill the database OR transcribtion of the call AI that fills database of ready to use tools (integrations)
+try whatever works - both suit
 
-5) How to show in the best way how budget is formed for a quote - EXPERT OPINION(sales manager + developers) - HOW MANY HOURS, RATE, PEOPLE COUNT?
+5) How to show in the best way how budget is formed for a quote - EXPERT OPINION(sales manager + developers) - HOW MANY HOURS, RATE, PEOPLE COUNT? - very simplified decision 
 
-6) Automantion Opportunity 5: Once budget is formed => quote template in pdf generation
+7) Automantion Opportunity 5: Once budget is formed => quote template in pdf generation 
 
-7) How much of these processes could be automated?
+9) How much of these processes could be automated - is it enough?

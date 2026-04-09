@@ -109,3 +109,4 @@ Furthermore, the CRM system can automatically generate sales performance reports
 | **Communication** | Fragmented email threads with no centralized history. | **Integrated Tracking:** All customer interactions are logged directly in the CRM via Gmail/API integration. |
 | **Process Monitoring** | Weekly reports manually compiled from spreadsheets; often outdated. | **Real-Time Dashboards:** Automatic generation of sales performance reports and live revenue forecasts. |
 
+## 6. Coaching questions

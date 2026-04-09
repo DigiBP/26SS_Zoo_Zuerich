@@ -132,13 +132,15 @@ Furthermore, the CRM system can automatically generate sales performance reports
 ## 6. Coaching questions - Automation Opportunities
 
 1) Automation Opoortunity 1: Customer fills a contact form -> should automatical fill to the one source of truth(one system) 
-and lead is created in the system: Is it possible to choose only 1 system for this project? Or some free integrations? 
+and lead is created in the system: Is it possible to choose only 1 system for this project? Or some free integrations?
+through make.com - datastore(imitation of CRM), hubspot, superbase - define shared database and fields in our form - status, budget, timeline?
 
 2) Automation Opportunity 2: Assignment a lead to the responsible sales representattive 
-(is the decision table suitable here?) - based on the workload, location or which parametres? 
+(is the decision table suitable here?) - based on the workload, location or which parametres?
+Decision table? -> saved to the database through Camunda (task in between registered lead and lead assignment - business rule task) 
 
 3) Automation Opportunity 3: 
-Automatic send of an email to choose the availability (third-party ready service, calendar integration?)
+Automatic send of an email to choose the availability (third-party ready service(calendly)) 
 
 4) Automation Opportunity 4: Form of unified question(to be created) that is filled by Lead to fill the database OR transcribtion of the call AI that fills database of ready to use tools (integrations)
 

@@ -35,7 +35,7 @@ for item in table_of_contents["sections"]:
         print(f"- {item}")
 ## 1. Introduction
 
-AlpineTech Solutions is a Swiss-based technology company headquartered in Olten. The company works on an IT-outsourcing model, provides IT services, and cybersecurity consulting for small and medium-sized enterprises across Switzerland, Germany, and Austria. With approximately 200 employees, including a sales department of 25 representatives, AlpineTech Solutions has experienced rapid growth over the past three years.
+AlpineTech Solutions is a Swiss-based technology company headquartered in Olten. The company works on an IT-outsourcing model, provides IT services, and cybersecurity consulting for small and medium-sized enterprises across Switzerland, Germany, and Austria. With approximately 200 employees, including a sales department of 10 representatives, AlpineTech Solutions has experienced rapid growth over the past three years.
 
 As the company expanded its customer base and sales activities, the existing tools used to manage sales processes have become increasingly inefficient. Currently, AlpineTech Solutions relies on spreadsheets, email communication, and shared documents to track leads, manage customer interactions, and monitor sales opportunities. These fragmented tools create operational inefficiencies, chaos in processes and limit visibility into sales performance.
 

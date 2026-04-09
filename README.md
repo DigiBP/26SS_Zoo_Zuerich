@@ -33,6 +33,27 @@ for item in table_of_contents["sections"]:
             print(f"- {key} (has subsections)")
     else:
         print(f"- {item}")
+
+## Project members
+
+### Project Team / Authors
+
+| Name | Role | Email |
+| :--- | :--- | :--- |
+| Robin Kaefer | [Role] | [robin.kaefer@students.fhnw.ch](mailto:robin.kaefer@students.fhnw.ch) |
+| Kate Shevelieva | [Role] | [kateryna.shevelieva@students.fhnw.ch](mailto:kateryna.shevelieva@students.fhnw.ch) |
+| Sofiia Irfan Pasha | [Role] | [sofiia.irfanpasha@students.fhnw.ch](mailto:sofiia.irfanpasha@students.fhnw.ch) |
+| Kateryna Hrebeniuk | [Role] | [kateryna.hrebeniuk@students.fhnw.ch](mailto:kateryna.hrebeniuk@students.fhnw.ch) |
+| Nataliia Zinovieva | [Role] | [nataliia.zinovieva@students.fhnw.ch](mailto:nataliia.zinovieva@students.fhnw.ch) |
+
+### Supervisors
+
+| Name | Email |
+| :--- | :--- |
+| Andreas Martin | [andreas.martin@fhnw.ch](mailto:andreas.martin@fhnw.ch) |
+| Charuta Pande | [charuta.pande@fhnw.ch](mailto:charuta.pande@fhnw.ch) |
+| Devid Montecchiari | [devid.montecchiari@fhnw.ch](mailto:devid.montecchiari@fhnw.ch) |
+
 ## 1. Introduction
 
 AlpineTech Solutions is a Swiss-based technology company headquartered in Olten. The company provides IT services for small and medium-sized enterprises across Switzerland, Germany, and Austria. With approximately 200 employees, including a sales department of 10 representatives, AlpineTech Solutions has experienced rapid growth over the past three years.

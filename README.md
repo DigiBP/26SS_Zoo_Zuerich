@@ -108,4 +108,21 @@ Furthermore, the CRM system can automatically generate sales performance reports
 | **Reminder Automation** | **No Follow-up:** If a lead didn't respond after the initial contact, there was no structured way to re-engage them. | **Smart Follow-up Loop:** Automated 3-day **Timer Event** triggers a reminder service task based on. |
 | **Communication** | Fragmented email threads with no centralized history; info lost if staff is absent. | **Integrated Tracking:** All customer interactions are logged directly in the CRM via **Gmail/API integration**. |
 
-## 6. Coaching questions
+## 6. Coaching questions - Automation Opportunities
+
+1) Automation Opoortunity 1: Customer fills a contact form -> should automatical fill to the one source of truth(one system) 
+and lead is created in the system: Is it possible to choose only 1 system for this project? Or some free integrations? 
+
+2) Automation Opportunity 2: Assignment a lead to the responsible sales representattive 
+(is the decision table suitable here?) - based on the workload, location or which parametres? 
+
+3) Automation Opportunity 3: 
+Automatic send of an email to choose the availability (third-party ready service, calendar integration?)
+
+4) Automation Opportunity 4: Form of unified question(to be created) that is filled by Lead to fill the database OR transcribtion of the call AI that fills database of ready to use tools (integrations)
+
+5) How to show in the best way how budget is formed for a quote - EXPERT OPINION(sales manager + developers) - HOW MANY HOURS, RATE, PEOPLE COUNT?
+
+6) Automantion Opportunity 5: Once budget is formed => quote template in pdf generation
+
+7) How much of these processes could be automated?

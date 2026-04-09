@@ -1,45 +1,30 @@
 # SS26_AlpineTech_Solutions
-table_of_contents = {
-    "title": "Table of Contents",
-    "sections": [
-        "Project Members",
-        "Abstract & Project Overview",
-        {
-            "AS-IS Process": [
-                "Key Limitations of the AS-IS Process",
-                "AS-IS BPMN Diagram",
-                "Project Goal"
-            ]
-        },
-        {
-            "TO-BE Process": [
-                "TO-BE BPMN Diagram",
-                "Challenges and Requirements",
-                "Users and Stakeholders"
-            ]
-        },
-        "Technologies Used",
-        {
-            "Backend Overview": [
-                "Architecture",
-                "Application Entry Point ( main.py )",
-                "Database & Seeding",
-                "Domain Models",
-                "API Layer (Routers)",
-                "Service Layer (Business Logic)",
-                "Frontend Hosting",
-                "Docker Infrastructure",
-                "Typical Use Cases"
-            ]
-        },
-        {
-            "Workflow Orchestration": [
-                "Camunda BPMN Engine",
-                "n8n Integration & AI Storage Worker"
-            ]
-        }
-    ]
-}
+## Table of Contents
+
+* [Project Members](#project-members)
+* [Abstract & Project Overview](#abstract--project-overview)
+* [AS-IS Process](#as-is-process)
+  * [Key Limitations of the AS-IS Process](#key-limitations-of-the-as-is-process)
+  * [AS-IS BPMN Diagram](#as-is-bpmn-diagram)
+  * [Project Goal](#project-goal)
+* [TO-BE Process](#to-be-process)
+  * [TO-BE BPMN Diagram](#to-be-bpmn-diagram)
+  * [Challenges and Requirements](#challenges-and-requirements)
+  * [Users and Stakeholders](#users-and-stakeholders)
+* [Technologies Used](#technologies-used)
+* [Backend Overview](#backend-overview)
+  * [Architecture](#architecture)
+  * [Application Entry Point ( main.py )](#application-entry-point--mainpy-)
+  * [Database & Seeding](#database--seeding)
+  * [Domain Models](#domain-models)
+  * [API Layer (Routers)](#api-layer-routers)
+  * [Service Layer (Business Logic)](#service-layer-business-logic)
+  * [Frontend Hosting](#frontend-hosting)
+  * [Docker Infrastructure](#docker-infrastructure)
+  * [Typical Use Cases](#typical-use-cases)
+* [Workflow Orchestration](#workflow-orchestration)
+  * [Camunda BPMN Engine](#camunda-bpmn-engine)
+  * [n8n Integration & AI Storage Worker](#n8n-integration--ai-storage-worker)
 
 # Example of how to print the main sections:
 for item in table_of_contents["sections"]:
@@ -50,7 +35,7 @@ for item in table_of_contents["sections"]:
         print(f"- {item}")
 ## 1. Introduction
 
-AlpineTech Solutions is a Swiss-based technology company headquartered in Olten. The company works on an IT-outsourcing model, provides IT services, and cybersecurity consulting for small and medium-sized enterprises across Switzerland, Germany, and Austria. With approximately 200 employees, including a sales department of 25 representatives, AlpineTech Solutions has experienced rapid growth over the past three years.
+AlpineTech Solutions is a Swiss-based technology company headquartered in Olten. The company provides IT services for small and medium-sized enterprises across Switzerland, Germany, and Austria. With approximately 200 employees, including a sales department of 10 representatives, AlpineTech Solutions has experienced rapid growth over the past three years.
 
 As the company expanded its customer base and sales activities, the existing tools used to manage sales processes have become increasingly inefficient. Currently, AlpineTech Solutions relies on spreadsheets, email communication, and shared documents to track leads, manage customer interactions, and monitor sales opportunities. These fragmented tools create operational inefficiencies, chaos in processes and limit visibility into sales performance.
 
@@ -111,3 +96,16 @@ Quote generation can also be automated through predefined templates and pricing 
 
 Furthermore, the CRM system can automatically generate sales performance reports and dashboards, providing management with real-time insights into sales activities and revenue forecasts.
 
+## 5. Current Implementation & Progress
+
+### Comparison: From Manual Inefficiency to Digital Excellence
+
+| Feature | AS-IS (Before) | TO-BE (Digitalised Improvement) |
+| :--- | :--- | :--- |
+| **Lead Registration** | Manual entry into multiple Excel files, leading to duplicates and data loss. | **Automated Service Task:** Leads are captured via API and instantly stored in a centralized **CRM Database**. |
+| **Lead Assignment** | Manual decision-making by managers; slow and inconsistent coordination. | **Automated Logic:** Automatic routing to sales reps based on region or industry **(DMN)**. |
+| **Scheduling Automation** | **Missing Stage:** There was no formal step for scheduling consultations. | **API-Driven Scheduling:** System automatically sends available slots and creates appointments in the CRM upon selection. |
+| **Reminder Automation** | **No Follow-up:** If a lead didn't respond after the initial contact, there was no structured way to re-engage them. | **Smart Follow-up Loop:** Automated 3-day **Timer Event** triggers a reminder service task based on. |
+| **Communication** | Fragmented email threads with no centralized history; info lost if staff is absent. | **Integrated Tracking:** All customer interactions are logged directly in the CRM via **Gmail/API integration**. |
+
+## 6. Coaching questions

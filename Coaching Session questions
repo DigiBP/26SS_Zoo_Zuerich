@@ -1,0 +1,24 @@
+Current Problems:
+chaotic lead qualification
+a lot of manual work
+lots of tables
+no single source of truth 
+
+BPMN AS-IS:
+
+To establish Project Goals:
+
+To describe AS-IS: users, stakeholders, tools, challenges etc
+To decsribe TO-BE: problem VS requirements
+
+Coaching session:
+1) Automation Opoortunity 1: Customer fills a contact form -> should automatical fill to the one source of truth(one system) 
+and lead is created in the system: Is it possible to choose only 1 system for this project? Or some free integrations? 
+
+2) Automation Opportunity 2: Assignment a lead to the responsible sales representattive 
+(is the decision table suitable here?) - based on the workload, location or which parametres? 
+
+3) Automation Opportunity 3: 
+Automatic send of an email to choose the availability (third-party ready service, calendar integration?)
+
+4) Autimation Opportunity 4: 

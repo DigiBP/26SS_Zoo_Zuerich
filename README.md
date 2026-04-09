@@ -1,5 +1,53 @@
 # SS26_AlpineTech_Solutions
+table_of_contents = {
+    "title": "Table of Contents",
+    "sections": [
+        "Project Members",
+        "Abstract & Project Overview",
+        {
+            "AS-IS Process": [
+                "Key Limitations of the AS-IS Process",
+                "AS-IS BPMN Diagram",
+                "Project Goal"
+            ]
+        },
+        {
+            "TO-BE Process": [
+                "TO-BE BPMN Diagram",
+                "Challenges and Requirements",
+                "Users and Stakeholders"
+            ]
+        },
+        "Technologies Used",
+        {
+            "Backend Overview": [
+                "Architecture",
+                "Application Entry Point ( main.py )",
+                "Database & Seeding",
+                "Domain Models",
+                "API Layer (Routers)",
+                "Service Layer (Business Logic)",
+                "Frontend Hosting",
+                "Docker Infrastructure",
+                "Typical Use Cases"
+            ]
+        },
+        {
+            "Workflow Orchestration": [
+                "Camunda BPMN Engine",
+                "n8n Integration & AI Storage Worker"
+            ]
+        }
+    ]
+}
 
+# Example of how to print the main sections:
+for item in table_of_contents["sections"]:
+    if isinstance(item, dict):
+        for key in item.keys():
+            print(f"- {key} (has subsections)")
+    else:
+        print(f"- {item}")
 ## 1. Introduction
 
 AlpineTech Solutions is a Swiss-based technology company headquartered in Olten. The company works on an IT-outsourcing model, provides IT services, and cybersecurity consulting for small and medium-sized enterprises across Switzerland, Germany, and Austria. With approximately 200 employees, including a sales department of 25 representatives, AlpineTech Solutions has experienced rapid growth over the past three years.

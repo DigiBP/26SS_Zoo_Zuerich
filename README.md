@@ -1,45 +1,30 @@
 # SS26_AlpineTech_Solutions
-table_of_contents = {
-    "title": "Table of Contents",
-    "sections": [
-        "Project Members",
-        "Abstract & Project Overview",
-        {
-            "AS-IS Process": [
-                "Key Limitations of the AS-IS Process",
-                "AS-IS BPMN Diagram",
-                "Project Goal"
-            ]
-        },
-        {
-            "TO-BE Process": [
-                "TO-BE BPMN Diagram",
-                "Challenges and Requirements",
-                "Users and Stakeholders"
-            ]
-        },
-        "Technologies Used",
-        {
-            "Backend Overview": [
-                "Architecture",
-                "Application Entry Point ( main.py )",
-                "Database & Seeding",
-                "Domain Models",
-                "API Layer (Routers)",
-                "Service Layer (Business Logic)",
-                "Frontend Hosting",
-                "Docker Infrastructure",
-                "Typical Use Cases"
-            ]
-        },
-        {
-            "Workflow Orchestration": [
-                "Camunda BPMN Engine",
-                "n8n Integration & AI Storage Worker"
-            ]
-        }
-    ]
-}
+## Table of Contents
+
+* [Project Members](#project-members)
+* [Abstract & Project Overview](#abstract--project-overview)
+* [AS-IS Process](#as-is-process)
+  * [Key Limitations of the AS-IS Process](#key-limitations-of-the-as-is-process)
+  * [AS-IS BPMN Diagram](#as-is-bpmn-diagram)
+  * [Project Goal](#project-goal)
+* [TO-BE Process](#to-be-process)
+  * [TO-BE BPMN Diagram](#to-be-bpmn-diagram)
+  * [Challenges and Requirements](#challenges-and-requirements)
+  * [Users and Stakeholders](#users-and-stakeholders)
+* [Technologies Used](#technologies-used)
+* [Backend Overview](#backend-overview)
+  * [Architecture](#architecture)
+  * [Application Entry Point ( main.py )](#application-entry-point--mainpy-)
+  * [Database & Seeding](#database--seeding)
+  * [Domain Models](#domain-models)
+  * [API Layer (Routers)](#api-layer-routers)
+  * [Service Layer (Business Logic)](#service-layer-business-logic)
+  * [Frontend Hosting](#frontend-hosting)
+  * [Docker Infrastructure](#docker-infrastructure)
+  * [Typical Use Cases](#typical-use-cases)
+* [Workflow Orchestration](#workflow-orchestration)
+  * [Camunda BPMN Engine](#camunda-bpmn-engine)
+  * [n8n Integration & AI Storage Worker](#n8n-integration--ai-storage-worker)
 
 # Example of how to print the main sections:
 for item in table_of_contents["sections"]:

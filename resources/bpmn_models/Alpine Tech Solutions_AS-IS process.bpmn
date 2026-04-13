@@ -424,7 +424,7 @@
         <di:waypoint x="1400" y="380" />
         <di:waypoint x="1485" y="380" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1537" y="373" width="45" height="14" />
+          <dc:Bounds x="1547" y="373" width="45" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0wcolsb_di" bpmnElement="Flow_0wcolsb">

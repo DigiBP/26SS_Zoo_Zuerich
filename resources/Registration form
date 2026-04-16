@@ -8,3 +8,12 @@ Branch/field/domain <dropdown list with generated domains - financial, logistics
 Phone number: <numbers>
 Email <freetext>
 Free text field <customer needs>
+
+Possible domains
+
+Financial / Banking / Insurance
+Logistics / Supply Chain / Transport
+Healthcare / Pharma / Chemical
+Industrial / Manufacturing
+Architecture / Construction / Real Estate
+Other, please, specify 

@@ -41,7 +41,7 @@ for item in table_of_contents["sections"]:
 | Name | Role | Email |
 | :--- | :--- | :--- |
 | Robin Kaefer | [Role] | [robin.kaefer@students.fhnw.ch](mailto:robin.kaefer@students.fhnw.ch) |
-| Kate Shevelieva | [Role] | [kateryna.shevelieva@students.fhnw.ch](mailto:kateryna.shevelieva@students.fhnw.ch) |
+| Kateryna Shevelieva | [Role] | [kateryna.shevelieva@students.fhnw.ch](mailto:kateryna.shevelieva@students.fhnw.ch) |
 | Sofiia Irfan Pasha | [Role] | [sofiia.irfanpasha@students.fhnw.ch](mailto:sofiia.irfanpasha@students.fhnw.ch) |
 | Kateryna Hrebeniuk | [Role] | [kateryna.hrebeniuk@students.fhnw.ch](mailto:kateryna.hrebeniuk@students.fhnw.ch) |
 | Nataliia Zinovieva | [Role] | [nataliia.zinovieva@students.fhnw.ch](mailto:nataliia.zinovieva@students.fhnw.ch) |

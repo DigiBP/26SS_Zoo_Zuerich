@@ -153,8 +153,39 @@ try whatever works - both suit
 
 ## Task 3. Step-by-Step: Automating Meeting Scheduling with Calendly
 
-# Overview
-In the original process, the step "Send email with available consultation slots" was handled manually by a Sales Representative. Task 3 replaces this with a fully automated scheduling flow using Calendly, connected to Camunda via Make (Integromat).
+In the original process, the step **"Send email with available consultation slots"** was handled manually by a Sales Representative. Task 3 replaces this with a fully automated scheduling flow using **Calendly**, connected to Camunda via **Make (Integromat)**.
+
+---
+
+### Challenge and Requirement
+
+| Challenge | Requirement |
+|---|---|
+| Meeting slots were shared **manually** by the Sales Rep | Automate slot delivery via a self-service booking link |
+| No booking confirmation mechanism in the process | Detect confirmation via webhook and resume the process automatically |
+| Process could stall indefinitely waiting for a reply | Add a timeout escalation path for unresponsive leads |
+
+---
+
+### How It Works
+
+1. **Trigger** — Once the lead is assigned, a Make scenario sends the client a Gmail containing their Sales Rep's **Calendly booking link**. No manual action is required.
+
+2. **Client books** — The client self-selects a time slot via Calendly, which handles availability and calendar management automatically.
+
+3. **Confirmation** — Calendly fires an `invitee.created` webhook, caught by Make, which calls the Camunda REST API to send a `ConsultationBooked` message to the waiting process instance. The process then resumes at **"Specify needs with client"**.
+
+4. **Timeout** — If no booking is received within 7 days, a Timer Boundary Event escalates the case — either triggering a follow-up reminder or routing the lead to rejection.
+
+---
+
+### BPMN Changes
+
+| Element | AS-IS | TO-BE |
+|---|---|---|
+| Send email with slots | Manual user task | Automated service task (Make + Gmail) |
+| Client response | Not modeled | Message Catch Event (`ConsultationBooked`) |
+| No-response handling | Not modeled | Timer Boundary Event (7-day escalation) |
 
 
 

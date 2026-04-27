@@ -153,7 +153,8 @@ try whatever works - both suit
 
 ## Task 3. Step-by-Step: Automating Meeting Scheduling with Calendly
 
-
+# Overview
+In the original process, the step "Send email with available consultation slots" was handled manually by a Sales Representative. Task 3 replaces this with a fully automated scheduling flow using Calendly, connected to Camunda via Make (Integromat).
 
 
 

@@ -140,7 +140,7 @@ through make.com - datastore(imitation of CRM), hubspot, superbase - define shar
 Decision table? -> saved to the database through Camunda (task in between registered lead and lead assignment - business rule task) 
 
 3) Automation Opportunity 3: 
-Automatic send of an email to choose the availability (third-party ready service(calendly)) 
+Automatic send of an email to choose the availability (third-party ready service(cal.com)) 
 
 4) Automation Opportunity 4: Form of unified question(to be created) that is filled by Lead to fill the database OR transcribtion of the call AI that fills database of ready to use tools (integrations)
 try whatever works - both suit
@@ -151,9 +151,9 @@ try whatever works - both suit
 
 9) How much of these processes could be automated - is it enough?
 
-## Task 3. Step-by-Step: Automating Meeting Scheduling with Calendly
+## Task 3. Step-by-Step: Automating Meeting Scheduling with Cal.com
 
-In the original process, the step **"Send email with available consultation slots"** was handled manually by a Sales Representative. Task 3 replaces this with a fully automated scheduling flow using **Calendly**, connected to Camunda via **Make (Integromat)**.
+In the original process, the step **"Send email with available consultation slots"** was handled manually by a Sales Representative. Task 3 replaces this with a fully automated scheduling flow using **Cal.com**, connected to Camunda via **Make (Integromat)**.
 
 ---
 
@@ -169,11 +169,11 @@ In the original process, the step **"Send email with available consultation slot
 
 ### How It Works
 
-1. **Trigger** — Once the lead is assigned, a Make scenario sends the client a Gmail containing their Sales Rep's **Calendly booking link**. No manual action is required.
+1. **Trigger** — Once the lead is assigned, a Make scenario sends the client a Gmail containing their Sales Rep's **cal.com booking link**. No manual action is required.
 
-2. **Client books** — The client self-selects a time slot via Calendly, which handles availability and calendar management automatically.
+2. **Client books** — The client self-selects a time slot via cal.com, which handles availability and calendar management automatically.
 
-3. **Confirmation** — Calendly fires an `invitee.created` webhook, caught by Make, which calls the Camunda REST API to send a `ConsultationBooked` message to the waiting process instance. The process then resumes at **"Specify needs with client"**.
+3. **Confirmation** — cal.com fires an `invitee.created` webhook, caught by Make, which calls the Camunda REST API to send a `ConsultationBooked` message to the waiting process instance. The process then resumes at **"Specify needs with client"**.
 
 4. **Timeout** — If no booking is received within 7 days, a Timer Boundary Event escalates the case — either triggering a follow-up reminder or routing the lead to rejection.
 

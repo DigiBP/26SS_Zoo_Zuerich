@@ -103,7 +103,7 @@ The selected solution should improve operational efficiency, provide better data
 
 ---
 
-## 4. Opportunities for Process Digitalisation and Automation
+## 4. Opportunities for Process Digitalisation and Automation - needs to be rewritten
 
 The implementation of the CRM system will enable several automated workflows within the sales process.
 

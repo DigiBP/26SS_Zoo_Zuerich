@@ -1,0 +1,274 @@
+{
+  "components": [
+    {
+      "text": "# Communications",
+      "type": "text",
+      "layout": {
+        "row": "Row_06hs4m7",
+        "columns": null
+      },
+      "id": "Field_0dvrugp"
+    },
+    {
+      "label": "Customer Data",
+      "components": [
+        {
+          "label": "First Name",
+          "type": "textfield",
+          "layout": {
+            "row": "Row_0354x13",
+            "columns": null
+          },
+          "id": "Field_0e8n0q8",
+          "key": "customerFirstName",
+          "readonly": true
+        },
+        {
+          "label": "Last Name",
+          "type": "textfield",
+          "layout": {
+            "row": "Row_0354x13",
+            "columns": null
+          },
+          "id": "Field_0d5aapx",
+          "key": "customerLastName",
+          "readonly": true
+        },
+        {
+          "label": "Email",
+          "type": "textfield",
+          "layout": {
+            "row": "Row_0nk0aen",
+            "columns": null
+          },
+          "id": "Field_04cz91h",
+          "key": "customerEmail",
+          "readonly": false
+        },
+        {
+          "label": "Phone",
+          "type": "number",
+          "layout": {
+            "row": "Row_1bfmjb3",
+            "columns": null
+          },
+          "id": "Field_006j6jf",
+          "key": "customerPhone",
+          "readonly": false
+        },
+        {
+          "label": "Region",
+          "type": "textfield",
+          "layout": {
+            "row": "Row_0ooyq62",
+            "columns": null
+          },
+          "id": "Field_1n4n7i9",
+          "key": "customerRegion",
+          "readonly": true
+        },
+        {
+          "label": "Company",
+          "type": "textfield",
+          "layout": {
+            "row": "Row_15o8yc5",
+            "columns": null
+          },
+          "id": "Field_1b9ynye",
+          "key": "customerCompany",
+          "readonly": false
+        },
+        {
+          "label": "Industry",
+          "type": "textfield",
+          "layout": {
+            "row": "Row_15o8yc5",
+            "columns": null
+          },
+          "id": "Field_1cjnar1",
+          "key": "customerIndustry",
+          "readonly": true
+        },
+        {
+          "label": "Company size",
+          "values": [
+            {
+              "label": "1-50 employees",
+              "value": "1-50"
+            },
+            {
+              "label": "51-200 employyes",
+              "value": "51-200"
+            },
+            {
+              "label": "201-500 employees",
+              "value": "201-500"
+            },
+            {
+              "label": "500+ employees",
+              "value": "500+"
+            }
+          ],
+          "type": "select",
+          "layout": {
+            "row": "Row_15yxc21",
+            "columns": null
+          },
+          "id": "Field_0bzcju6",
+          "key": "customerCompanySize"
+        },
+        {
+          "label": "Description",
+          "type": "textfield",
+          "layout": {
+            "row": "Row_0z3l656",
+            "columns": null
+          },
+          "id": "Field_199pmlr",
+          "key": "leadRemark",
+          "conditional": {
+            "hide": "=mainNeed != \"other\""
+          },
+          "readonly": true
+        }
+      ],
+      "showOutline": true,
+      "type": "group",
+      "layout": {
+        "row": "Row_1itcz3a",
+        "columns": null
+      },
+      "id": "Field_1xz8ba0"
+    },
+    {
+      "type": "table",
+      "layout": {
+        "row": "Row_08ex44r",
+        "columns": 16
+      },
+      "label": "Past Communications",
+      "rowCount": 5,
+      "columns": [
+        {
+          "label": "Date",
+          "key": "commDate"
+        },
+        {
+          "label": "Channel",
+          "key": "channel"
+        },
+        {
+          "label": "Discussed",
+          "key": "notes"
+        },
+        {
+          "label": "Next Step",
+          "key": "nextStep"
+        },
+        {
+          "label": "Logged by",
+          "key": "loggedBy"
+        }
+      ],
+      "id": "Field_1jihpmx",
+      "dataSource": "=communicationHistory"
+    },
+    {
+      "label": "New Communication",
+      "components": [
+        {
+          "label": "Communication Channel",
+          "values": [
+            {
+              "label": "Phone Call",
+              "value": "phone"
+            },
+            {
+              "label": "Video Call",
+              "value": "video"
+            },
+            {
+              "label": "Email",
+              "value": "email"
+            },
+            {
+              "label": "In-person Meeting",
+              "value": "meeting"
+            }
+          ],
+          "type": "select",
+          "layout": {
+            "row": "Row_06oo8oi",
+            "columns": null
+          },
+          "id": "Field_0siou42",
+          "key": "newChannel"
+        },
+        {
+          "label": "Notes",
+          "type": "textarea",
+          "layout": {
+            "row": "Row_0vprj9w",
+            "columns": null
+          },
+          "id": "Field_1nbyjvx",
+          "key": "newNotes"
+        },
+        {
+          "label": "Next Step",
+          "values": [
+            {
+              "label": "Schedule follow-up call",
+              "value": "followUp"
+            },
+            {
+              "label": "Create a quote",
+              "value": "createQuote"
+            },
+            {
+              "label": "Close Lead (not interested)",
+              "value": "closeLead"
+            }
+          ],
+          "type": "select",
+          "layout": {
+            "row": "Row_0qxpvvr",
+            "columns": null
+          },
+          "id": "Field_11uyzf7",
+          "key": "newNextStep"
+        },
+        {
+          "subtype": "date",
+          "dateLabel": "Follow-up Call Date",
+          "type": "datetime",
+          "layout": {
+            "row": "Row_0osz0ae",
+            "columns": null
+          },
+          "id": "Field_1rdfenm",
+          "key": "newFollowUpDate",
+          "conditional": {
+            "hide": "=newNextStep != \"followUp\""
+          }
+        }
+      ],
+      "showOutline": true,
+      "type": "group",
+      "layout": {
+        "row": "Row_1thy1vj",
+        "columns": null
+      },
+      "id": "Field_15t8d7o"
+    }
+  ],
+  "type": "default",
+  "id": "Form_1m108oi",
+  "exporter": {
+    "name": "Camunda Modeler",
+    "version": "5.44.0"
+  },
+  "executionPlatform": "Camunda Platform",
+  "executionPlatformVersion": "7.24.0",
+  "schemaVersion": 19
+}

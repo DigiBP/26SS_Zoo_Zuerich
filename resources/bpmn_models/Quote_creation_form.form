@@ -1,0 +1,223 @@
+{
+  "components": [
+    {
+      "text": "# Quote Details",
+      "type": "text",
+      "layout": {
+        "row": "Row_033r39j",
+        "columns": null
+      },
+      "id": "Field_0hbx0fx"
+    },
+    {
+      "label": "Customer Data",
+      "components": [
+        {
+          "label": "First Name",
+          "type": "textfield",
+          "layout": {
+            "row": "Row_1p32mzu",
+            "columns": null
+          },
+          "id": "Field_17fxd88",
+          "key": "customerFirstName",
+          "readonly": true
+        },
+        {
+          "label": "Last Name",
+          "type": "textfield",
+          "layout": {
+            "row": "Row_1p32mzu",
+            "columns": null
+          },
+          "id": "Field_02f2b4s",
+          "key": "customerLastName",
+          "readonly": true
+        },
+        {
+          "label": "Email",
+          "type": "textfield",
+          "layout": {
+            "row": "Row_1xdyvri",
+            "columns": null
+          },
+          "id": "Field_154kgdw",
+          "key": "customerEmail",
+          "readonly": true
+        },
+        {
+          "label": "Phone",
+          "type": "textfield",
+          "layout": {
+            "row": "Row_1klb0gr",
+            "columns": null
+          },
+          "id": "Field_18rz3mb",
+          "key": "customerPhone",
+          "readonly": true
+        },
+        {
+          "label": "Lead Description",
+          "type": "textfield",
+          "layout": {
+            "row": "Row_0az6fpm",
+            "columns": null
+          },
+          "id": "Field_12skqci",
+          "key": "leadRemark",
+          "readonly": true
+        }
+      ],
+      "showOutline": true,
+      "type": "group",
+      "layout": {
+        "row": "Row_1igxym7",
+        "columns": null
+      },
+      "id": "Field_0c3zrh1"
+    },
+    {
+      "type": "table",
+      "layout": {
+        "row": "Row_0jmsnf1",
+        "columns": null
+      },
+      "label": "Past Communications",
+      "rowCount": 5,
+      "columns": [
+        {
+          "label": "Date",
+          "key": "commDate"
+        },
+        {
+          "label": "Channel",
+          "key": "channel"
+        },
+        {
+          "label": "Discussed",
+          "key": "notes"
+        },
+        {
+          "label": "Next Step",
+          "key": "nextStep"
+        },
+        {
+          "label": "Logged By",
+          "key": "loggedBy"
+        }
+      ],
+      "id": "Field_0i257gr",
+      "dataSource": "=communicationHistory"
+    },
+    {
+      "label": "Quote Fields",
+      "components": [
+        {
+          "label": "Project Title",
+          "type": "textfield",
+          "layout": {
+            "row": "Row_040f96g",
+            "columns": null
+          },
+          "id": "Field_0mggty2",
+          "key": "projectTitle",
+          "validate": {
+            "required": true,
+            "maxLength": "255"
+          }
+        },
+        {
+          "subtype": "date",
+          "dateLabel": "Valid Unitl",
+          "type": "datetime",
+          "layout": {
+            "row": "Row_0sajb5x",
+            "columns": null
+          },
+          "id": "Field_1l6es9a",
+          "key": "validUntil",
+          "validate": {
+            "required": true
+          }
+        },
+        {
+          "label": "Scope Notes",
+          "type": "textarea",
+          "layout": {
+            "row": "Row_1vghqxg",
+            "columns": null
+          },
+          "id": "Field_0wtawgb",
+          "key": "scopeNotes"
+        },
+        {
+          "label": "Payment Terms",
+          "type": "textarea",
+          "layout": {
+            "row": "Row_1yxjh7w",
+            "columns": null
+          },
+          "id": "Field_0tpjece",
+          "key": "paymentTerms"
+        },
+        {
+          "label": "Line Items",
+          "components": [
+            {
+              "label": "Service",
+              "type": "select",
+              "layout": {
+                "row": "Row_1xi8rcj",
+                "columns": null
+              },
+              "id": "Field_00lb2jn",
+              "key": "serviceId",
+              "valuesExpression": "=availableServices"
+            },
+            {
+              "label": "Quantity",
+              "type": "number",
+              "layout": {
+                "row": "Row_0nttdp2",
+                "columns": null
+              },
+              "id": "Field_04p1jb7",
+              "key": "quantity",
+              "defaultValue": 1,
+              "validate": {
+                "min": "1"
+              }
+            }
+          ],
+          "showOutline": true,
+          "isRepeating": true,
+          "allowAddRemove": true,
+          "defaultRepetitions": 1,
+          "type": "dynamiclist",
+          "layout": {
+            "row": "Row_10riuuv",
+            "columns": null
+          },
+          "id": "Field_01mvbtl",
+          "path": "lineItems"
+        }
+      ],
+      "showOutline": true,
+      "type": "group",
+      "layout": {
+        "row": "Row_0zm5msb",
+        "columns": null
+      },
+      "id": "Field_1tn8m5n"
+    }
+  ],
+  "type": "default",
+  "id": "Form_1sss4u1",
+  "exporter": {
+    "name": "Camunda Modeler",
+    "version": "5.44.0"
+  },
+  "executionPlatform": "Camunda Platform",
+  "executionPlatformVersion": "7.24.0",
+  "schemaVersion": 19
+}

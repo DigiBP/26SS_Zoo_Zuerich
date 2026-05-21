@@ -1,0 +1,76 @@
+{
+  "components": [
+    {
+      "text": "# Confirm Booking",
+      "type": "text",
+      "layout": {
+        "row": "Row_012jutj",
+        "columns": null
+      },
+      "id": "Field_0tlc807"
+    },
+    {
+      "label": "Customer First Name",
+      "type": "textfield",
+      "layout": {
+        "row": "Row_0p4f4u7",
+        "columns": null
+      },
+      "id": "Field_1glgzv2",
+      "key": "customerFirstName",
+      "readonly": true
+    },
+    {
+      "label": "Customer Last Name",
+      "type": "textfield",
+      "layout": {
+        "row": "Row_0p4f4u7",
+        "columns": null
+      },
+      "id": "Field_0qx4v9v",
+      "key": "customerLastName",
+      "readonly": true
+    },
+    {
+      "label": "Customer Company Name",
+      "type": "textfield",
+      "layout": {
+        "row": "Row_0qlr6jt",
+        "columns": null
+      },
+      "id": "Field_0y9i9rr",
+      "key": "customerCompany",
+      "readonly": true
+    },
+    {
+      "label": "Customer Email",
+      "type": "textfield",
+      "layout": {
+        "row": "Row_0hg6fvu",
+        "columns": null
+      },
+      "id": "Field_0gzqecj",
+      "key": "customerEmail",
+      "readonly": true
+    },
+    {
+      "label": "Confirm customer booking",
+      "action": "submit",
+      "type": "button",
+      "layout": {
+        "row": "Row_1x9blid",
+        "columns": null
+      },
+      "id": "Field_1bivx9c"
+    }
+  ],
+  "type": "default",
+  "id": "Confirm_Booking_Status_Form",
+  "exporter": {
+    "name": "Camunda Modeler",
+    "version": "5.44.0"
+  },
+  "executionPlatform": "Camunda Platform",
+  "executionPlatformVersion": "7.24.0",
+  "schemaVersion": 19
+}

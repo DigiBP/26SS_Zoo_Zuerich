@@ -221,7 +221,7 @@ Before the call begins, **Make Scenario 1** is triggered automatically. It conne
 
 #### Document Communication — Camunda Form
 
-During the call, the assigned Sales Representative opens a **Camunda User Task** containing a structured form pre-populated with the retrieved lead data. The rep fills in the client's requirements, preferences, and any relevant notes while the conversation is ongoing.
+During the call, the assigned Sales Representative opens a **Camunda User Task** containing a structured form pre-populated with the retrieved lead data. The rep fills in the client's requirements, preferences, and any relevant notes while the conversation is ongoing. 
 
 The form is divided into multiple sections (Form 1–6), each capturing a specific area of the client's needs:
 

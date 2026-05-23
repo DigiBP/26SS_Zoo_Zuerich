@@ -1,12 +1,16 @@
+# Team Zoo Zürich
+
+![Team Zoo Zürich](Images/Image_1.png)
+
 # SS26_AlpineTech_Solutions
 ## Table of Contents
 
 * [Project Members](#project-members)
 * [Abstract & Project Overview](#abstract--project-overview)
-* [AS-IS Process](#as-is-process)
-  * [Key Limitations of the AS-IS Process](#key-limitations-of-the-as-is-process)
-  * [AS-IS BPMN Diagram](#as-is-bpmn-diagram)
-  * [Project Goal](#project-goal)
+* [2. Problem Description](#2-problem-description)
+  * [2.1 AS-IS Process Overview](#21-as-is-process-overview)
+    * [Key Limitations of the AS-IS Process](#key-limitations-of-the-as-is-process)
+    * [AS-IS BPMN Diagram](#as-is-bpmn-diagram)
 * [TO-BE Process](#to-be-process)
   * [TO-BE BPMN Diagram](#to-be-bpmn-diagram)
   * [Challenges and Requirements](#challenges-and-requirements)
@@ -83,73 +87,92 @@ These issues have resulted in several operational problems:
 
 To improve efficiency and support future growth, AlpineTech Solutions's management has decided to introduce a CRM system that centralizes sales data and automates key sales activities.
 
+### 2.1 AS-IS Process Overview
+
+The current sales process at AlpineTech Solutions involves three internal roles — **Sales Representative**, **Sales Manager**, and **Technical Team** — coordinating with the **Customer** through a shared corporate email inbox.
+
+**Process Flow:**
+
+1. **Lead Registration** — A customer sends a request to the shared corporate email. The Sales Representative manually registers the lead by recording the client's contact details into a personal Excel file.
+
+2. **Needs Definition** — The Sales Representative contacts the client to clarify their requirements and determine whether the client is interested in proceeding.
+
+3. **Quote Creation** — If the client is interested, the Sales Representative manually creates a quote document in Word/Excel, which is then exported to PDF.
+
+4. **Quote Verification** — The quote is reviewed by the Sales Manager. If the quote is not approved, it is returned to the Sales Representative for updates. This loop continues until the quote is approved.
+
+5. **Quote Delivery** — The approved quote is sent to the client via Gmail.
+
+6. **Client Decision** — The client's response is received by email. The Sales Representative manually checks the answer:
+   - If the answer is **negative** — the client's row in Excel is marked red and the process ends (rejected).
+   - If the answer is **positive** — the Sales Representative prepares and sends an invoice via Gmail.
+
+7. **Project Handover** — The Sales Representative hands the project over to the Development Team. In parallel, the Technical Team creates and delivers the product to the client, while the system waits for the payment confirmation.
+
+8. **Completion** — Once the product is delivered and payment is received, the client's row in Excel is marked green and the process ends successfully (*Customer onboarded / Project complete*).
+
+**Tools currently used:**
+
+| Step | Tool |
+|---|---|
+| Lead tracking | Excel (individual files per Sales Rep) |
+| Quote preparation | Microsoft Word / Excel → PDF |
+| Communication | Shared corporate Gmail inbox |
+| Status tracking | Excel (manual color-coding: red = rejected, green = onboarded) |
+
+#### Key Limitations of the AS-IS Process
+
+- No centralised lead management — each Sales Representative maintains separate Excel files, leading to duplicates and data loss.
+- All communication is handled through a shared inbox with no history tracking, meaning information is lost when staff are reassigned or absent.
+- Quote and invoice preparation is entirely manual, consuming significant time and introducing inconsistencies.
+- There is no structured follow-up mechanism — if a client does not respond, there is no automated re-engagement path.
+- Sales Managers have no real-time pipeline visibility; status reporting requires manual consolidation from multiple spreadsheets.
+- Client status is tracked by manually changing cell colors in Excel, which is error-prone and unscalable.
+
+#### AS-IS BPMN Diagram
+
+The diagram below shows the full AS-IS sales process at AlpineTech Solutions:
+
+![Alpine Tech Solutions AS-IS Process](Camunda/Alpine_Tech_Solutions_AS-IS%20process.png)
+
+The full process model can be viewed and edited in Camunda Modeler:
+[Alpine Tech Solutions — AS-IS process (BPMN)](resources/bpmn_models/Alpine%20Tech%20Solutions_AS-IS%20process.bpmn)
+
+#### Project Focus: Digitalisation of the First Part of the Process
+
+While the AS-IS process covers the entire sales lifecycle, **this project focuses on the digitalisation of the first part of the process** — from lead registration through needs definition, quote creation, and quote approval. These steps represent the highest concentration of manual effort and coordination overhead, and are therefore the primary target for automation.
+
+![Focus Process](Camunda/Alpine_Tech_Solutions_AS-IS_process_focus_%20process.png)
+
 ---
 
 ## 3. Project Objective
 
-The objective of this project is to identify, evaluate, and select an appropriate CRM software solution that will enable the digitalisation of AlpineTech Solutions's sales processes.
+The problems identified in the AS-IS process — fragmented data, manual coordination, and lack of visibility — require a structured digitalisation of the first part of the sales process. The goal of this project is to automate and centralise the steps from lead registration through to quote approval, eliminating manual overhead and reducing the risk of data loss.
 
-The CRM system should support the following objectives:
+The solution targets the following outcomes:
 
-- Centralised management of leads, contacts, and customer accounts
-- Structured tracking of sales opportunities through a sales pipeline
-- Automated lead assignment and follow-up reminders
-- Integrated communication tracking with customers
-- Automated quote generation and sales reporting
-- Integration with the company's existing ERP and email systems
-- Maybe select?
-
-The selected solution should improve operational efficiency, provide better data visibility, and support scalable sales growth.
+- Centralised, real-time lead tracking replacing individual Excel files
+- Automated lead assignment based on predefined rules (region, workload)
+- Automated scheduling and follow-up reminders to prevent leads from stalling
+- Structured quote generation with manager approval flow
+- Full interaction history accessible to the entire sales team
 
 ---
 
-## 4. Opportunities for Process Digitalisation and Automation - needs to be rewritten
+## 4. Digitalisation Approach: AS-IS vs. TO-BE
 
-The implementation of the CRM system will enable several automated workflows within the sales process.
+The table below maps each identified bottleneck from the AS-IS process to its automated counterpart in the TO-BE implementation:
 
-For example, when a new lead submits a contact form on the company website, the information can automatically be entered into the CRM system. The lead can then be automatically assigned to a sales representative based on predefined rules such as region or industry.
-
-The CRM system can also automate follow-up reminders for sales representatives, ensuring that leads are contacted within a specified timeframe.
-
-Another opportunity for automation is the sales opportunity pipeline, where deals automatically progress through defined stages such as lead qualification, proposal preparation, negotiation, and contract closing.
-
-Quote generation can also be automated through predefined templates and pricing rules, reducing manual work and improving consistency in proposals.
-
-Furthermore, the CRM system can automatically generate sales performance reports and dashboards, providing management with real-time insights into sales activities and revenue forecasts.
-
-## 5. Current Implementation & Progress
-
-### Comparison: From Manual Inefficiency to Digital Excellence
-
-| Feature | AS-IS (Before) | TO-BE (Digitalised Improvement) |
+| Process Step | AS-IS (Manual) | TO-BE (Automated) |
 | :--- | :--- | :--- |
-| **Lead Registration** | Manual entry into multiple Excel files, leading to duplicates and data loss. | **Automated Service Task:** Leads are captured via API and instantly stored in a centralized **CRM Database**. |
-| **Lead Assignment** | Manual decision-making by managers; slow and inconsistent coordination. | **Automated Logic:** Automatic routing to sales reps based on region or industry **(DMN)**. |
-| **Scheduling Automation** | **Missing Stage:** There was no formal step for scheduling consultations. | **API-Driven Scheduling:** System automatically sends available slots and creates appointments in the CRM upon selection. |
-| **Reminder Automation** | **No Follow-up:** If a lead didn't respond after the initial contact, there was no structured way to re-engage them. | **Smart Follow-up Loop:** Automated 3-day **Timer Event** triggers a reminder service task based on. |
-| **Communication** | Fragmented email threads with no centralized history; info lost if staff is absent. | **Integrated Tracking:** All customer interactions are logged directly in the CRM via **Gmail/API integration**. |
+| **Lead Registration** | Manual entry into individual Excel files; duplicates and data loss common. | Leads captured via contact form and stored instantly in a centralised CRM database via API. |
+| **Lead Assignment** | Manual decision by the Sales Manager; slow and inconsistent. | Automatic routing to the responsible Sales Representative using a **DMN decision table** (region / workload). |
+| **Consultation Scheduling** | No formal step — slots shared manually by email. | Automated booking link (Cal.com) sent via Gmail; confirmation received via webhook and injected into the process. |
+| **Needs Definition** | Information gathered verbally during a call; stored in personal notes or Excel with no shared access. If the Sales Rep was absent, context was lost and the client had to repeat themselves. | A structured **Camunda User Task form** is filled by the Sales Rep during the call. Data is pulled from and saved to the central database, making the full client context available to any team member. The step repeats in a **loop** across multiple interactions until the client confirms their requirements — only then does the process advance to quote creation. |
+| **Quote Generation** | Manual creation in Word/Excel, exported to PDF; inconsistent and time-consuming. | Quote generated automatically from a predefined template based on inputs collected during needs definition. |
+| **Communication Tracking** | Fragmented Gmail threads; history lost when staff are absent or reassigned. | All interactions logged centrally in the CRM and accessible to the full sales team. |
 
-## 6. Coaching questions - Automation Opportunities
-
-1) Automation Opoortunity 1: Customer fills a contact form -> should automatical fill to the one source of truth(one system) 
-and lead is created in the system: Is it possible to choose only 1 system for this project? Or some free integrations?
-through make.com - datastore(imitation of CRM), hubspot, superbase - define shared database and fields in our form - status, budget, timeline?
-
-2) Automation Opportunity 2: Assignment a lead to the responsible sales representattive 
-(is the decision table suitable here?) - based on the workload, location or which parametres?
-Decision table? -> saved to the database through Camunda (task in between registered lead and lead assignment - business rule task) 
-
-3) Automation Opportunity 3: 
-Automatic send of an email to choose the availability (third-party ready service(cal.com)) 
-
-4) Automation Opportunity 4: Form of unified question(to be created) that is filled by Lead to fill the database OR transcribtion of the call AI that fills database of ready to use tools (integrations)
-try whatever works - both suit
-
-5) How to show in the best way how budget is formed for a quote - EXPERT OPINION(sales manager + developers) - HOW MANY HOURS, RATE, PEOPLE COUNT? - very simplified decision 
-
-7) Automantion Opportunity 5: Once budget is formed => quote template in pdf generation 
-
-9) How much of these processes could be automated - is it enough?
 
 ## Task 3. Step-by-Step: Automating Meeting Scheduling with Cal.com
 

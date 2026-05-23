@@ -140,7 +140,7 @@ The full process model can be viewed and edited in Camunda Modeler:
 
 #### Project Focus: Digitalisation of the First Part of the Process
 
-While the AS-IS process covers the entire sales lifecycle, **this project focuses on the digitalisation of the first part of the process** — from lead registration through needs definition, quote creation, and quote approval. These steps represent the highest concentration of manual effort and coordination overhead, and are therefore the primary target for automation.
+While the AS-IS process covers the entire sales lifecycle, **this project focuses on the digitalisation of the process from the moment a lead request is received through to the creation of a quote**. This scope covers lead registration, lead assignment, consultation scheduling, needs definition, and quote creation — the steps with the highest concentration of manual effort, coordination overhead, and risk of data loss.
 
 ![Focus Process](Camunda/Alpine_Tech_Solutions_AS-IS_process_focus_%20process.png)
 
@@ -148,7 +148,7 @@ While the AS-IS process covers the entire sales lifecycle, **this project focuse
 
 ## 3. Project Objective
 
-The problems identified in the AS-IS process — fragmented data, manual coordination, and lack of visibility — require a structured digitalisation of the first part of the sales process. The goal of this project is to automate and centralise the steps from lead registration through to quote approval, eliminating manual overhead and reducing the risk of data loss.
+The problems identified in the AS-IS process — fragmented data, manual coordination, and lack of visibility — require a structured digitalisation of the sales process. The goal of this project is to automate and centralise the steps **from the moment a lead request is received through to the creation of a quote**, eliminating manual overhead and reducing the risk of data loss.
 
 The solution targets the following outcomes:
 
@@ -174,41 +174,50 @@ The table below maps each identified bottleneck from the AS-IS process to its au
 | **Communication Tracking** | Fragmented Gmail threads; history lost when staff are absent or reassigned. | All interactions logged centrally in the CRM and accessible to the full sales team. |
 
 
-## Task 3. Step-by-Step: Automating Meeting Scheduling with Cal.com
+## 5. TO-BE Process
 
-In the original process, the step **"Send email with available consultation slots"** was handled manually by a Sales Representative. Task 3 replaces this with a fully automated scheduling flow using **Cal.com**, connected to Camunda via **Make (Integromat)**.
+The TO-BE process replaces the fragmented, manual workflow with a centralised, automated sales pipeline orchestrated through **Camunda BPMN**. The digitised scope covers the full journey from an incoming lead request to the creation of a quote.
+
+![Alpine Tech Solutions TO-BE Process](Camunda/Alpine%20Tech%20Solutions_TO-BE_focus_process.png)
+
+The full TO-BE process model can be viewed and edited in Camunda Modeler:
+[Alpine Tech Solutions — TO-BE process (BPMN)](resources/bpmn_models/Alpine%20Tech%20Solutions_TO-BE%20process.bpmn)
 
 ---
 
-### Challenge and Requirement
+### 5.1 Register a Lead
 
-| Challenge | Requirement |
-|---|---|
-| Meeting slots were shared **manually** by the Sales Rep | Automate slot delivery via a self-service booking link |
-| No booking confirmation mechanism in the process | Detect confirmation via webhook and resume the process automatically |
-| Process could stall indefinitely waiting for a reply | Add a timeout escalation path for unresponsive leads |
+A new lead submits a contact form on the company website. The form data is automatically captured via API and stored in the central CRM database — no manual entry is required. The lead record is immediately available to the entire sales team, eliminating duplicate entries and data loss that occurred with individual Excel files.
+
+---
+
+### 5.2 Choose Sales Representative and Assign Lead
+
+Once the lead is registered, the process triggers a **DMN decision table** that evaluates predefined rules (e.g. region, workload) and automatically selects the most appropriate Sales Representative. The lead is assigned without any manual intervention from the Sales Manager, and the assigned representative receives an automated notification to begin follow-up.
+
+---
+
+### 5.3 Send Email with Available Consultation Slots
+
+The system automatically sends the client a Gmail containing the assigned Sales Representative's **Cal.com** booking link. The client self-selects a convenient time slot directly through the link. Upon booking, Cal.com fires a webhook that notifies the Camunda process, which resumes automatically. If no booking is received within 7 days, a **Timer Boundary Event** escalates the case.
+
+---
+
+### 5.4 Specify Needs with Client
+
+![Specify Needs with Client](Camunda/Specify_needs_with_clients/Specify_needs_with_clients.png)
+
+During the consultation call, the Sales Representative opens a structured **Camunda User Task form** that is pre-populated with existing client data from the database. The rep fills in the client's requirements during the conversation, and all information is saved back to the central database immediately. This step runs as a **loop** — the process repeats across multiple interactions until the client confirms their needs. Because all data is centralised, any team member can pick up and continue the conversation without loss of context, even if the original Sales Representative is unavailable.
+
+---
+
+### 5.5 Create a Quote
+
+Once the client has confirmed their requirements, the process advances to quote creation. A quote is generated automatically from a predefined template using the data collected and stored during the needs definition phase, replacing the manual Word/Excel preparation from the AS-IS process.
 
 ---
 
 ### How It Works
-
-1. **Trigger** — Once the lead is assigned, a Make scenario sends the client a Gmail containing their Sales Rep's **cal.com booking link**. No manual action is required.
-
-2. **Client books** — The client self-selects a time slot via cal.com, which handles availability and calendar management automatically.
-
-3. **Confirmation** — cal.com fires an `invitee.created` webhook, caught by Make, which calls the Camunda REST API to send a `ConsultationBooked` message to the waiting process instance. The process then resumes at **"Specify needs with client"**.
-
-4. **Timeout** — If no booking is received within 7 days, a Timer Boundary Event escalates the case — either triggering a follow-up reminder or routing the lead to rejection.
-
----
-
-### BPMN Changes
-
-| Element | AS-IS | TO-BE |
-|---|---|---|
-| Send email with slots | Manual user task | Automated service task (Make + Gmail) |
-| Client response | Not modeled | Message Catch Event (`ConsultationBooked`) |
-| No-response handling | Not modeled | Timer Boundary Event (7-day escalation) |
 
 
 

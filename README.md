@@ -6,37 +6,20 @@
 ## Table of Contents
 
 * [Project Members](#project-members)
-* [Abstract & Project Overview](#abstract--project-overview)
+* [1. Introduction](#1-introduction)
 * [2. Problem Description](#2-problem-description)
   * [2.1 AS-IS Process Overview](#21-as-is-process-overview)
     * [Key Limitations of the AS-IS Process](#key-limitations-of-the-as-is-process)
     * [AS-IS BPMN Diagram](#as-is-bpmn-diagram)
-* [TO-BE Process](#to-be-process)
-  * [TO-BE BPMN Diagram](#to-be-bpmn-diagram)
-  * [Challenges and Requirements](#challenges-and-requirements)
-  * [Users and Stakeholders](#users-and-stakeholders)
-* [Technologies Used](#technologies-used)
-* [Backend Overview](#backend-overview)
-  * [Architecture](#architecture)
-  * [Application Entry Point ( main.py )](#application-entry-point--mainpy-)
-  * [Database & Seeding](#database--seeding)
-  * [Domain Models](#domain-models)
-  * [API Layer (Routers)](#api-layer-routers)
-  * [Service Layer (Business Logic)](#service-layer-business-logic)
-  * [Frontend Hosting](#frontend-hosting)
-  * [Docker Infrastructure](#docker-infrastructure)
-  * [Typical Use Cases](#typical-use-cases)
-* [Workflow Orchestration](#workflow-orchestration)
-  * [Camunda BPMN Engine](#camunda-bpmn-engine)
-  * [n8n Integration & AI Storage Worker](#n8n-integration--ai-storage-worker)
-
-# Example of how to print the main sections:
-for item in table_of_contents["sections"]:
-    if isinstance(item, dict):
-        for key in item.keys():
-            print(f"- {key} (has subsections)")
-    else:
-        print(f"- {item}")
+    * [Project Focus: Digitalisation of the First Part of the Process](#project-focus-digitalisation-of-the-first-part-of-the-process)
+* [3. Project Objective](#3-project-objective)
+* [4. Digitalisation Approach: AS-IS vs. TO-BE](#4-digitalisation-approach-as-is-vs-to-be)
+* [5. TO-BE Process](#5-to-be-process)
+  * [5.1 Register a Lead](#51-register-a-lead)
+  * [5.2 Choose Sales Representative and Assign Lead](#52-choose-sales-representative-and-assign-lead)
+  * [5.3 Send Email with Available Consultation Slots](#53-send-email-with-available-consultation-slots)
+  * [5.4 Specify Needs with Client](#54-specify-needs-with-client)
+  * [5.5 Create a Quote](#55-create-a-quote)
 
 ## Project members
 

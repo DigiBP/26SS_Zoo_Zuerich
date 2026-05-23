@@ -1,0 +1,19 @@
+Registration form
+ 
+First Name <free text>
+Last Name <free text>
+Company Name <free text>
+Region <dropdown: Switzerland, Germany, Austria, other>
+Branch/field/domain <dropdown list with generated domains - financial, logistics, healthcare/pharma/chemical, industrial/manufacture, architechure + other> 
+Phone number: <numbers>
+Email <freetext>
+Free text field <customer needs>
+
+Possible domains
+
+Financial / Banking / Insurance
+Logistics / Supply Chain / Transport
+Healthcare / Pharma / Chemical
+Industrial / Manufacturing
+Architecture / Construction / Real Estate
+Other, please, specify 

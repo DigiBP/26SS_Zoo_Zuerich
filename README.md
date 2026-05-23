@@ -207,7 +207,48 @@ The system automatically sends the client a Gmail containing the assigned Sales 
 
 ![Specify Needs with Client](Camunda/Specify_needs_with_clients/Specify_needs_with_clients.png)
 
-During the consultation call, the Sales Representative opens a structured **Camunda User Task form** that is pre-populated with existing client data from the database. The rep fills in the client's requirements during the conversation, and all information is saved back to the central database immediately. This step runs as a **loop** — the process repeats across multiple interactions until the client confirms their needs. Because all data is centralised, any team member can pick up and continue the conversation without loss of context, even if the original Sales Representative is unavailable.
+This step is the core communication loop between the Sales Representative and the client. It is fully integrated with the central database via **Make (Integromat)** and consists of three stages: retrieving existing data, collecting needs through a structured form, and saving everything back to the database.
+
+---
+
+#### Retrieve Lead Data
+
+![Make Scenario 1 – Retrieve Lead Data](Camunda/Specify_needs_with_clients/Specify_needs_Make.Scenario1-Retrive%20Lead%20Data.png)
+
+Before the call begins, **Make Scenario 1** is triggered automatically. It connects Camunda with the database and retrieves all existing information about the lead — contact details, previous interactions, and any data already collected during earlier process steps. This data is injected into the Camunda process instance so the Sales Representative starts the conversation with full context, even if a different rep handled the client previously.
+
+---
+
+#### Document Communication — Camunda Form
+
+During the call, the assigned Sales Representative opens a **Camunda User Task** containing a structured form pre-populated with the retrieved lead data. The rep fills in the client's requirements, preferences, and any relevant notes while the conversation is ongoing.
+
+The form is divided into multiple sections (Form 1–6), each capturing a specific area of the client's needs:
+
+| | |
+|---|---|
+| ![Form 1](Camunda/Specify_needs_with_clients/Form_1.png) | ![Form 2](Camunda/Specify_needs_with_clients/Form_2.png) |
+| ![Form 3](Camunda/Specify_needs_with_clients/Form_3.png) | ![Form 4](Camunda/Specify_needs_with_clients/Form_4.png) |
+| ![Form 5](Camunda/Specify_needs_with_clients/Form_5.png) | ![Form 6](Camunda/Specify_needs_with_clients/Form_6.png) |
+
+---
+
+#### Save to Database
+
+![Make Scenario 2 – Save to Database](Camunda/Specify_needs_with_clients/Specify_needs_Make.Scenario2-Save%20to%20DataBase.png)
+
+Once the form is submitted, **Make Scenario 2** is triggered. All responses entered by the Sales Representative are automatically saved back to the central database. This ensures that the full communication history is preserved and accessible to any team member at any time — regardless of who conducted the call.
+
+---
+
+#### Communication Loop
+
+Because a client typically requires multiple interactions before confirming their needs, this step runs as a **loop**. After each call, the process returns to the beginning of 5.4 — the rep retrieves the updated data, conducts the next conversation, fills in the form again, and saves the new information. The loop continues until the client's requirements are confirmed.
+
+Once confirmed, the process exits the loop and returns to the main TO-BE flow, where one of two outcomes follows:
+
+- **Lead closed** — the client is not a match; the case is closed in the database.
+- **Create a Quote** — the client proceeds, and the process advances to step 5.5.
 
 ---
 

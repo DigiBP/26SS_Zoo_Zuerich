@@ -173,6 +173,7 @@ The full TO-BE process model can be viewed and edited in Camunda Modeler:
 The client fills in a Google Form that captures all required lead information (name, company, contact details, region, and a brief description of their needs). Google Forms directly addresses this by capturing structured data automatically, eliminating the manual entry step that causes duplicates and data loss. There is no learning curve both the sales team managing the form and clients filling it in are likely already familiar with Google Forms.
 
 Integration Flow
+
 Client submits the Google Form, the submission is recorded in the linked Google Sheet automatically.
 Make  triggers on new row a Make scenario monitors the Google Sheet for new entries. As soon as a new row appears (i.e. a form submission), it fires.
 Make sends the data to the CRM, the scenario maps the form fields to the CRM database fields and creates a new lead record via API call.

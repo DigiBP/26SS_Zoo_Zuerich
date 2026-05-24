@@ -170,9 +170,14 @@ The full TO-BE process model can be viewed and edited in Camunda Modeler:
 
 ### 5.1 Register a Lead
 
-A new lead submits a contact form on the company website. The form data is automatically captured via API and stored in the central CRM database — no manual entry is required. The lead record is immediately available to the entire sales team, eliminating duplicate entries and data loss that occurred with individual Excel files.
+The client fills in a Google Form that captures all required lead information (name, company, contact details, region, and a brief description of their needs). Google Forms directly addresses this by capturing structured data automatically, eliminating the manual entry step that causes duplicates and data loss. There is no learning curve both the sales team managing the form and clients filling it in are likely already familiar with Google Forms.
 
----
+Integration Flow
+Client submits the Google Form, the submission is recorded in the linked Google Sheet automatically.
+Make  triggers on new row a Make scenario monitors the Google Sheet for new entries. As soon as a new row appears (i.e. a form submission), it fires.
+Make sends the data to the CRM, the scenario maps the form fields to the CRM database fields and creates a new lead record via API call.
+Camunda process instance is started, Make also triggers the Camunda REST API to start a new process instance, passing the lead data as process variables.
+Process continues to step 5.2 the lead is now registered centrally and the DMN decision table can assign it to the right Sales Representative.
 
 ### 5.2 Choose Sales Representative and Assign Lead
 

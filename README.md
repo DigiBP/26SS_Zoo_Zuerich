@@ -262,6 +262,8 @@ Each employee has their own Cal.com event type ("Initial Consultation with [Name
 
 #### Waiting for the Booking — Human Task with a Timer
 
+![Screenshot: Booking confirmation task](Confirm_Booking_Form.png)
+
 After the invitation has been sent, the process must wait for the customer to react. This is modeled as a **user task** ("Confirm Booking Status") assigned to the sales representative, with an **interrupting boundary timer event** attached.
 
 - If the customer books a consultation, the representative completes the user task
@@ -290,60 +292,119 @@ remain open indefinitely but is automatically closed after a defined period.
 
 ### 5.4 Specify Needs with Client
 
-![Specify Needs with Client](Camunda/Specify_needs_with_clients/Specify_needs_with_clients.png)
+#### Overview
 
-This step is the core communication loop between the Sales Representative and the client. It is fully integrated with the central database via **Make (Integromat)** and consists of three stages: retrieving existing data, collecting needs through a structured form, and saving everything back to the database.
+After a consultation has been booked, the process enters the needs-clarification phase. During this phase, the sales representative speaks with the customer to understand their requirements. In practice, this rarely happens in a single conversation — several calls or meetings may be necessary before the scope of a potential project is clear. Each of these interactions is logged and persisted in a central database, so that the complete communication history of a lead is always available.
 
----
+#### Implementation
 
-#### Retrieve Lead Data
+The needs-clarification phase is modeled as a **loop** in the process. One iteration of the loop consists of the following steps:
 
-![Make Scenario 1 – Retrieve Lead Data](Camunda/Specify_needs_with_clients/Specify_needs_Make.Scenario1-Retrive%20Lead%20Data.png)
+1. **Fetch past communications** – A service task calls a Make scenario that  retrieves all previously logged communications for the current lead.
+2. **Log Communication (user task)** – The sales representative is presented with a form that displays the past communications and allows them to record a new one.
+   The form also allows the representative to correct selected customer details (phone, email, company, company size) that may have become clearer during the conversation.
+3. **Persist** – On submission, the new communication is inserted into the `communications` table, and any changes to the editable customer fields are written back to the `customer` table.
+4. **Reset input variables** – A script task clears the variables holding the new communication's input, so that the next loop iteration starts with an empty form.
+5. **Decision gateway** – An exclusive (XOR) gateway evaluates the `nextStep` variable chosen by the representative and routes the process accordingly.
 
-Before the call begins, **Make Scenario 1** is triggered automatically. It connects Camunda with the database and retrieves all existing information about the lead — contact details, previous interactions, and any data already collected during earlier process steps. This data is injected into the Camunda process instance so the Sales Representative starts the conversation with full context, even if a different rep handled the client previously.
+![Screenshot: The communication loop in the BPMN](Images/Communications_Loop.png)
 
----
+![Screenshot: The communication Sub-Process in the BPMN](Images/Specify_Needs_Sub_Process.png)
 
-#### Document Communication — Camunda Form
+![Screenshot: The "Log Communication" task form](Communications_Form.png)
 
-During the call, the assigned Sales Representative opens a **Camunda User Task** containing a structured form pre-populated with the retrieved lead data. The rep fills in the client's requirements, preferences, and any relevant notes while the conversation is ongoing. 
+The decision gateway has three outcomes:
 
-The form is divided into multiple sections (Form 1–6), each capturing a specific area of the client's needs:
+- **`followUp`** – further clarification is needed; the process loops back and another communication is logged.
+- **`createQuote`** – the requirements are clear; the process proceeds to quote creation.
+- **`closeLead`** – the customer is no longer interested; the lead is closed.
 
-| | |
-|---|---|
-| ![Form 1](Camunda/Specify_needs_with_clients/Form_1.png) | ![Form 2](Camunda/Specify_needs_with_clients/Form_2.png) |
-| ![Form 3](Camunda/Specify_needs_with_clients/Form_3.png) | ![Form 4](Camunda/Specify_needs_with_clients/Form_4.png) |
-| ![Form 5](Camunda/Specify_needs_with_clients/Form_5.png) | ![Form 6](Camunda/Specify_needs_with_clients/Form_6.png) |
+### Design Rationale
 
----
+**Why communications are persisted centrally.** A central motivation for digitalizing this process is *continuity*. If all customer communication exists only in the heads or personal inboxes of individual sales representatives, the knowledge is lost the moment that representative is unavailable. By persisting every interaction in a central database, the complete history of a lead is preserved independently of any single person. If a representative falls ill or leaves the company, a colleague can take over the lead with full context.
 
-#### Save to Database
+**Why the history is fetched and displayed back into the form.** Persisting the communications alone is not sufficient to deliver this benefit — the data must also be *visible* to whoever works on the lead. Each iteration of the loop therefore fetches the full history and displays it within the "Log Communication" task. A representative taking over a lead sees all prior interactions directly in their normal workflow, without having to consult the database manually.
 
-![Make Scenario 2 – Save to Database](Camunda/Specify_needs_with_clients/Specify_needs_Make.Scenario2-Save%20to%20DataBase.png)
+**Why the phase is modeled as a loop.** Clarifying a customer's needs is an iterative process; it cannot be assumed to complete in a single conversation. Modeling the phase as a loop allows an arbitrary number of communications to be logged before the process moves on, which reflects how the interaction realistically unfolds.
 
-Once the form is submitted, **Make Scenario 2** is triggered. All responses entered by the Sales Representative are automatically saved back to the central database. This ensures that the full communication history is preserved and accessible to any team member at any time — regardless of who conducted the call.
+**Why certain customer fields are editable here.** Over the course of several conversations, a representative naturally learns more about the customer. Allowing selected fields — phone, email, company, and company size — to be corrected during communication logging keeps the customer record accurate, rather than freezing whatever was entered on the initial contact form.
 
----
+**Why the input variables are reset after each iteration.** Process variables persist for the lifetime of an instance. Without an explicit reset, the input fields of the "Log Communication" form would, on the next loop iteration, still contain the text of the *previous* communication. The reset script task clears these variables so that each new communication is entered into a blank form.
 
-#### Communication Loop
+**Why the logging employee is derived from the lead.** Each communication records which employee logged it. Rather than relying on the employee identifier being passed as a process variable, this value is read directly from the `lead` record (via a subquery) at insertion time. The lead already holds the assigned representative, so this is the single reliable source of truth and avoids a dependency on a variable that the connector did not propagate reliably.
 
-Because a client typically requires multiple interactions before confirming their needs, this step runs as a **loop**. After each call, the process returns to the beginning of 5.4 — the rep retrieves the updated data, conducts the next conversation, fills in the form again, and saves the new information. The loop continues until the client's requirements are confirmed.
+### Known Limitations
 
-Once confirmed, the process exits the loop and returns to the main TO-BE flow, where one of two outcomes follows:
-
-- **Lead closed** — the client is not a match; the case is closed in the database.
-- **Create a Quote** — the client proceeds, and the process advances to step 5.5.
+- The communication history is displayed in the form using a table component. This works reliably for single-line notes. Multi-line notes (notes containing line breaks) caused the underlying data to be transmitted as invalid JSON, which the table component could not render. The cause couldn't reliably be pinpointed. As a mitigation, communication notes are captured as single-line entries, which prevents the line breaks that trigger the issue.
+- A fully robust solution would require a connector that exposes the raw response body for manual parsing, allowing the history to be rendered reliably regardless of note formatting.
 
 ---
 
 ### 5.5 Create a Quote
 
-Once the client has confirmed their requirements, the process advances to quote creation. A quote is generated automatically from a predefined template using the data collected and stored during the needs definition phase, replacing the manual Word/Excel preparation from the AS-IS process.
+The quote creation is the most extensive part of the process. It is triggered when the needs-clarification phase concludes with the decision to create a quote. It is modeled as its own sub-process and covers the assembly of quote data, the generation of a professional PDF document, and its delivery to the customer by email.
+
+#### Overview of the Sub-Process
+
+The "Create and Send Quote" sub-process consists of the following steps:
+
+1. **Fetch past communications** – the communication history of the lead is retrieved and displayed in the quote form as a decision aid for the representative.
+2. **Fetch service catalog** – the list of available services is retrieved to populate the quote form.
+3. **Enter Quote Details (user task)** – the representative compiles the quote.
+4. **Generate and Send Quote** – the quote is persisted, rendered as a PDF, and emailed to the customer.
+
+![Screenshot: The Create and Send Quote sub-process](Images/Create_And_Send_Quote_Sub_Process.png)
+
+#### Service Catalog and Quote Form
+
+The company's services are stored in a `service_catalog` table — for example developer roles billed per hour, or fixed-price packages such as a discovery workshop. Before the quote form is shown, a service task fetches this catalog so that it can be offered to the representative as a selectable list.
+
+In the "Enter Quote Details" form, the representative provides the project title, a validity date, scope notes, and payment terms. The individual line items of the quote are entered using a **dynamic list** component: the representative can add as many line items as needed, each consisting of a service (chosen from the catalog) and a quantity.
+
+![Screenshot: The Enter Quote Details form](Images/Create_Quote_Form.png)
+
+#### Quote Persistence
+
+When the form is submitted, the "Generate and Send Quote" service task calls a Make scenario that persists the quote. The quote header is written to the `quote` table, and each line item to the `quote_item` table. Two values are determined automatically rather than entered by the representative:
+
+- **Quote number** – a sequential, human-readable identifier of the form `Q-YYYY-NNNN` is generated during insertion.
+- **Currency and VAT** – these are derived from the customer's country: Swiss customers are billed in CHF with the Swiss VAT rate, while customers in other countries are billed in EUR with a 0% rate and a reverse-charge note.
+
+#### PDF Generation
+
+To produce the actual quote document, the Make scenario first retrieves the persisted quote together with all line items. The monetary totals — subtotal, VAT amount, and gross total — are calculated within this SQL query. The line items are then assembled into an HTML fragment, which is passed, together with all header data, to **CustomJS**, an HTML-to-PDF service. CustomJS renders a professionally formatted PDF quote from a predefined HTML/CSS template.
+
+![Screenshot: A generated quote PDF](Example_Generated_Quote.png)
+
+#### Email Delivery
+
+Finally, the generated PDF is sent to the customer as an email attachment via the Gmail module, completing the sub-process.
+
+#### Confirming the Outcome
+
+After the quote has been sent, the process reaches the "Confirm Quote Status" user task. The sales representative records whether the customer accepted the quote. An exclusive gateway then routes the process: if the quote was accepted, the project is handed over to the developer team; if not, the lead is closed.
+
+#### Design Rationale
+
+**Why a service catalog instead of free-text line items.** Offering a predefined catalog of services keeps quotes consistent and reduces data-entry effort and error. The representative selects a service and enters a quantity, rather than re-typing descriptions and prices for every quote.
+
+**Why a dynamic list for line items.** The number of line items in a quote is not fixed — a quote may contain one position or many. A dynamic list allows the representative to add exactly as many line items as the quote requires, which a fixed set of input fields could not accommodate cleanly.
+
+**Why currency and VAT are derived rather than entered.** Tax treatment is a rule, not a free choice. Deriving currency and VAT from the customer's country removes a source of human error and ensures every quote is billed consistently. (The implemented VAT logic is a deliberate simplification — see Known Limitations.) 
+
+**Why the totals are calculated in SQL.** The monetary totals are derived values. We chose to compute them within the SQL query that retrieves the quote, rather than storing them in the database or computing them in Make. Computing them on retrieval guarantees the totals are always consistent with the underlying line items and cannot drift out of sync, and it keeps the calculation in a single, well-defined place.
+
+**Why CustomJS for PDF generation.** Generating a professionally formatted PDF requires a dedicated rendering tool. CustomJS converts an HTML/CSS template into a PDF, which allowed us to design the quote layout with standard web technologies. Its free tier was sufficient for the project's needs. Because CustomJS performs only simple placeholder substitution and cannot iterate over a list, the variable-length line items are pre-assembled into an HTML fragment within Make and injected into the template as a single block.
+
+**Why the "Convert ... Datatype" script tasks exist.** Data retrieved from the database and returned through the API connector is not always delivered in a format that Camunda's form components can process directly. The interleaved script tasks convert these values into the required JSON format so that they can be used in the subsequent forms.
+
+### Known Limitations
+
+- The VAT logic is a deliberate simplification. It distinguishes Swiss customers from all others but does not implement the full set of international tax rules. As taxation was not the focus of this project, an approximation was considered sufficient.
+- The communication history shown in the quote form does not include the most recently logged communication. The history is fetched at the start of the sub-process, and the latest entry is not yet reflected. As this history serves only as a decision aid and does not affect the generated quote, the issue was accepted for the prototype.
+- The process supports the creation of new quotes but not the revision of an existing quote. A revision would currently require creating a new quote.
 
 ---
-
-### How It Works
 
 
 

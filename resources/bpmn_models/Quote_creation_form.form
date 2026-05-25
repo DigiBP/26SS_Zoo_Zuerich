@@ -83,7 +83,9 @@
         "columns": null
       },
       "label": "Past Communications",
+      "dataSource": "=communicationHistory",
       "rowCount": 5,
+      "id": "Field_0i257gr",
       "columns": [
         {
           "label": "Date",
@@ -105,9 +107,7 @@
           "label": "Logged By",
           "key": "loggedBy"
         }
-      ],
-      "id": "Field_0i257gr",
-      "dataSource": "=communicationHistory"
+      ]
     },
     {
       "label": "Quote Fields",
@@ -148,7 +148,10 @@
             "columns": null
           },
           "id": "Field_0wtawgb",
-          "key": "scopeNotes"
+          "key": "scopeNotes",
+          "validate": {
+            "required": true
+          }
         },
         {
           "label": "Payment Terms",
@@ -158,7 +161,10 @@
             "columns": null
           },
           "id": "Field_0tpjece",
-          "key": "paymentTerms"
+          "key": "paymentTerms",
+          "validate": {
+            "required": true
+          }
         },
         {
           "label": "Line Items",
@@ -172,7 +178,10 @@
               },
               "id": "Field_00lb2jn",
               "key": "serviceId",
-              "valuesExpression": "=availableServices"
+              "valuesExpression": "=availableServices",
+              "validate": {
+                "required": true
+              }
             },
             {
               "label": "Quantity",
@@ -185,7 +194,8 @@
               "key": "quantity",
               "defaultValue": 1,
               "validate": {
-                "min": "1"
+                "min": "1",
+                "required": true
               }
             }
           ],

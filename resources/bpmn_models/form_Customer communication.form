@@ -147,7 +147,9 @@
         "columns": 16
       },
       "label": "Past Communications",
+      "dataSource": "=communicationHistory",
       "rowCount": 5,
+      "id": "Field_1jihpmx",
       "columns": [
         {
           "label": "Date",
@@ -169,9 +171,7 @@
           "label": "Logged by",
           "key": "loggedBy"
         }
-      ],
-      "id": "Field_1jihpmx",
-      "dataSource": "=communicationHistory"
+      ]
     },
     {
       "label": "New Communication",
@@ -202,17 +202,23 @@
             "columns": null
           },
           "id": "Field_0siou42",
-          "key": "newChannel"
+          "key": "newChannel",
+          "validate": {
+            "required": true
+          }
         },
         {
           "label": "Notes",
-          "type": "textarea",
+          "type": "textfield",
           "layout": {
-            "row": "Row_0vprj9w",
+            "row": "Row_1calthe",
             "columns": null
           },
-          "id": "Field_1nbyjvx",
-          "key": "newNotes"
+          "id": "Field_10oa4km",
+          "key": "newNotes",
+          "validate": {
+            "required": true
+          }
         },
         {
           "label": "Next Step",
@@ -236,7 +242,10 @@
             "columns": null
           },
           "id": "Field_11uyzf7",
-          "key": "newNextStep"
+          "key": "newNextStep",
+          "validate": {
+            "required": true
+          }
         },
         {
           "subtype": "date",
@@ -250,6 +259,9 @@
           "key": "newFollowUpDate",
           "conditional": {
             "hide": "=newNextStep != \"followUp\""
+          },
+          "validate": {
+            "required": false
           }
         }
       ],

@@ -15,20 +15,20 @@
         <bpmn:flowNodeRef>Gateway_0jzzft9</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_018a2tt</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_1nnu8pn</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Activity_163i670</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_0ubiodt</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_1h765jq</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_10b3xzc</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Activity_18t6ff5</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_0xl04s2</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_0e5c7p7</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Activity_15rggox</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_0fc12fi</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_124cqjr</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_07k0qsr</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_0k5sgok</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_1cn1ei9</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_1h63tpl</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_18t6ff5</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_15rggox</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_163i670</bpmn:flowNodeRef>
       </bpmn:lane>
     </bpmn:laneSet>
     <bpmn:endEvent id="Event_08ye7vx" name="Reject request">
@@ -52,16 +52,6 @@
       <bpmn:outgoing>Flow_0w37kkv</bpmn:outgoing>
       <bpmn:messageEventDefinition id="MessageEventDefinition_0tr11nj" />
     </bpmn:startEvent>
-    <bpmn:userTask id="Activity_163i670" name="Send a quote">
-      <bpmn:incoming>Flow_15nswbj</bpmn:incoming>
-      <bpmn:outgoing>Flow_1byymdu</bpmn:outgoing>
-      <bpmn:property id="Property_0q168jw" name="__targetRef_placeholder" />
-      <bpmn:dataInputAssociation id="DataInputAssociation_0sbeahf">
-        <bpmn:sourceRef>DataStoreReference_0jkwoiv</bpmn:sourceRef>
-        <bpmn:targetRef>Property_0q168jw</bpmn:targetRef>
-      </bpmn:dataInputAssociation>
-    </bpmn:userTask>
-    <bpmn:dataStoreReference id="DataStoreReference_0jkwoiv" name="Gmail" />
     <bpmn:userTask id="Activity_0ubiodt" name="Check answer">
       <bpmn:incoming>Flow_0wcolsb</bpmn:incoming>
       <bpmn:outgoing>Flow_10va4x9</bpmn:outgoing>
@@ -81,10 +71,6 @@
       </bpmn:dataOutputAssociation>
     </bpmn:serviceTask>
     <bpmn:dataStoreReference id="DataStoreReference_0h3c5i7" name="CRM-Database" />
-    <bpmn:userTask id="Activity_18t6ff5" name="Create a quote">
-      <bpmn:incoming>Flow_1eswifx</bpmn:incoming>
-      <bpmn:outgoing>Flow_15nswbj</bpmn:outgoing>
-    </bpmn:userTask>
     <bpmn:exclusiveGateway id="Gateway_0xl04s2" name="Does customer want to go ahead?">
       <bpmn:incoming>Flow_1tj7nn6</bpmn:incoming>
       <bpmn:outgoing>Flow_1ky80w5</bpmn:outgoing>
@@ -93,13 +79,6 @@
     <bpmn:endEvent id="Event_0e5c7p7" name="Reject request">
       <bpmn:incoming>Flow_0nkwkua</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:userTask id="Activity_15rggox" name="Close lead as rejected">
-      <bpmn:incoming>Flow_1ky80w5</bpmn:incoming>
-      <bpmn:outgoing>Flow_0nkwkua</bpmn:outgoing>
-      <bpmn:dataOutputAssociation id="DataOutputAssociation_1idohsh">
-        <bpmn:targetRef>DataStoreReference_0f2j2dv</bpmn:targetRef>
-      </bpmn:dataOutputAssociation>
-    </bpmn:userTask>
     <bpmn:userTask id="Activity_0fc12fi" name="specify needs with clients">
       <bpmn:incoming>Flow_1i9zc8j</bpmn:incoming>
       <bpmn:outgoing>Flow_1tj7nn6</bpmn:outgoing>
@@ -144,6 +123,27 @@
       <bpmn:incoming>Flow_0490bky</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="Flow_15nswbj" sourceRef="Activity_18t6ff5" targetRef="Activity_163i670" />
+    <bpmn:serviceTask id="Activity_18t6ff5" name="Create a quote">
+      <bpmn:incoming>Flow_1eswifx</bpmn:incoming>
+      <bpmn:outgoing>Flow_15nswbj</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Activity_15rggox" name="Close lead as rejected">
+      <bpmn:incoming>Flow_1ky80w5</bpmn:incoming>
+      <bpmn:outgoing>Flow_0nkwkua</bpmn:outgoing>
+      <bpmn:dataOutputAssociation id="DataOutputAssociation_1idohsh">
+        <bpmn:targetRef>DataStoreReference_0f2j2dv</bpmn:targetRef>
+      </bpmn:dataOutputAssociation>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Activity_163i670" name="Send a quote">
+      <bpmn:incoming>Flow_15nswbj</bpmn:incoming>
+      <bpmn:outgoing>Flow_1byymdu</bpmn:outgoing>
+      <bpmn:property id="Property_15a6o8m" name="__targetRef_placeholder" />
+      <bpmn:dataInputAssociation id="DataInputAssociation_0sbeahf">
+        <bpmn:sourceRef>DataStoreReference_0jkwoiv</bpmn:sourceRef>
+        <bpmn:targetRef>Property_15a6o8m</bpmn:targetRef>
+      </bpmn:dataInputAssociation>
+    </bpmn:serviceTask>
+    <bpmn:dataStoreReference id="DataStoreReference_0jkwoiv" name="Gmail" />
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_069ygew">
@@ -180,15 +180,6 @@
           <dc:Bounds x="226" y="300" width="86" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1nwyuoy_di" bpmnElement="Activity_163i670">
-        <dc:Bounds x="1019" y="315" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="DataStoreReference_0jkwoiv_di" bpmnElement="DataStoreReference_0jkwoiv">
-        <dc:Bounds x="1114" y="420" width="50" height="50" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1125" y="477" width="29" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0buakim_di" bpmnElement="Activity_0ubiodt">
         <dc:Bounds x="1319" y="315" width="100" height="80" />
       </bpmndi:BPMNShape>
@@ -206,9 +197,6 @@
           <dc:Bounds x="451" y="457" width="77" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_141m9yv_di" bpmnElement="Activity_18t6ff5">
-        <dc:Bounds x="899" y="315" width="100" height="80" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_0xl04s2_di" bpmnElement="Gateway_0xl04s2" isMarkerVisible="true">
         <dc:Bounds x="844" y="250" width="50" height="50" />
         <bpmndi:BPMNLabel>
@@ -220,10 +208,6 @@
         <bpmndi:BPMNLabel>
           <dc:Bounds x="1104" y="210" width="72" height="14" />
         </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1dhyqgv_di" bpmnElement="Activity_15rggox">
-        <dc:Bounds x="919" y="145" width="100" height="80" />
-        <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_039xcbs_di" bpmnElement="Activity_0fc12fi">
         <dc:Bounds x="719" y="235" width="100" height="80" />
@@ -253,6 +237,21 @@
         <dc:Bounds x="1731" y="442" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="1723" y="485" width="53" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1hqlg50_di" bpmnElement="Activity_18t6ff5">
+        <dc:Bounds x="899" y="315" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_085mabt_di" bpmnElement="Activity_15rggox">
+        <dc:Bounds x="919" y="145" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1ganv2b_di" bpmnElement="Activity_163i670">
+        <dc:Bounds x="1019" y="315" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DataStoreReference_0jkwoiv_di" bpmnElement="DataStoreReference_0jkwoiv">
+        <dc:Bounds x="1114" y="435" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1125" y="492" width="29" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_139h1kx_di" bpmnElement="Flow_139h1kx">
@@ -348,12 +347,12 @@
         <di:waypoint x="1019" y="355" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="DataOutputAssociation_0qt922h_di" bpmnElement="DataOutputAssociation_0qt922h">
-        <di:waypoint x="1207" y="368" />
-        <di:waypoint x="1161" y="420" />
+        <di:waypoint x="1208" y="369" />
+        <di:waypoint x="1158" y="435" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="DataInputAssociation_0sbeahf_di" bpmnElement="DataInputAssociation_0sbeahf">
-        <di:waypoint x="1114" y="424" />
-        <di:waypoint x="1081" y="395" />
+        <di:waypoint x="1115" y="435" />
+        <di:waypoint x="1079" y="395" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="DataOutputAssociation_0ips5ub_di" bpmnElement="DataOutputAssociation_0ips5ub">
         <di:waypoint x="400" y="315" />

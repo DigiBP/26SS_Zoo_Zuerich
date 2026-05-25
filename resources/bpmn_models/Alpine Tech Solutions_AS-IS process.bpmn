@@ -130,11 +130,11 @@
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Participant_0zy4qfw_di" bpmnElement="Participant_0zy4qfw" isHorizontal="true">
-        <dc:Bounds x="132" y="150" width="1918" height="420" />
+        <dc:Bounds x="132" y="150" width="1918" height="450" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_08e9dde_di" bpmnElement="Lane_08e9dde" isHorizontal="true">
-        <dc:Bounds x="162" y="150" width="1888" height="420" />
+        <dc:Bounds x="162" y="150" width="1888" height="450" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="DataStoreReference_0f2j2dv_di" bpmnElement="DataStoreReference_0f2j2dv">

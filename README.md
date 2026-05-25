@@ -196,15 +196,13 @@ Instead of a static DMN table, the system uses a dynamic, event-driven integrati
 
 ### 5.3 Send Email with Available Consultation Slots
 
-Once the lead has been assigned to a Sales Representative in step 5.2, the process advances to scheduling a consultation call. In the AS-IS process, slots were proposed manually by email, which created long back-and-forth threads and frequent conflicts. In the TO-BE process this step is fully automated: a **Service Task** in Camunda sends the client a Gmail containing a personal **Calendly** booking link, and the client self-books a slot directly into the assigned Sales Representative's live calendar.
+Once the lead has been assigned to a Sales Representative in step 5.2, the process advances to scheduling a consultation call. In the AS-IS process, slots were proposed manually by email, which created long back-and-forth threads and frequent conflicts. In the TO-BE process this step is fully automated: a **Service Task** in Camunda sends the client a Gmail containing a personal **Cal.com** booking link, and the client self-books a slot directly into the assigned Sales Representative's live calendar.
 
----
 
 #### BPMN Element
 
-In the BPMN model, this step is implemented as a single **Service Task** named **`Send email with available consultation slots`** in the *Sales Representative* lane. It sits between the user task *Assign Lead to Sales Rep.* and the user task *Specify Needs with Clients*. The task is automated — no human action is required inside Camunda; the rest of the work happens externally in Make.com, Gmail, and Calendly. The outcome (the actual meeting booking by the client) is sent back to the assigned Sales Representative's calendar by Calendly, so the rep is ready to start *Specify Needs with Clients* at the agreed time.
+In the BPMN model, this step is implemented as a single **Service Task** named **`Send email with available consultation slots`** in the *Sales Representative* lane. It sits between the user task *Assign Lead to Sales Rep.* and the user task *Specify Needs with Clients*. The task is automated — no human action is required inside Camunda; the rest of the work happens externally in Make.com, Gmail, and cal.com. The outcome (the actual meeting booking by the client) is sent back to the assigned Sales Representative's calendar by cal.com, so the rep is ready to start *Specify Needs with Clients* at the agreed time.
 
----
 
 #### Integration Flow
 
@@ -215,52 +213,49 @@ After *Assign Lead to Sales Rep.* writes the `employeeId` of the assigned Sales 
 - `clientEmail`
 - `employeeId` (the assigned Sales Representative)
 
-**2. Make.com resolves the correct Calendly link.**
-The Make scenario queries the CRM (PostgreSQL `employee` table) for the assigned Sales Representative and retrieves their personal **Calendly event link** (e.g. `https://calendly.com/alpinetech-john/30min-consultation`). Each Sales Rep has a dedicated Calendly event type connected to their own Google/Outlook calendar, so the booking always lands with the right person.
+**2. Make.com resolves the correct cal.com link.**
+The Make scenario queries the CRM (PostgreSQL `employee` table) for the assigned Sales Representative and retrieves their personal **Cal.com event link**`). Each Sales Rep has a dedicated Cal.com event type connected to their own Google/Outlook calendar, so the booking always lands with the right person.
 
 **3. Make.com sends the Gmail.**
 Using the Gmail module, Make composes and sends a personalised email to the client containing:
 - A short introduction from the assigned Sales Representative
-- The Calendly booking link
+- The Cal.com booking link
 - The purpose and expected duration of the call
 - A fallback contact for any issues with the link
 
-**4. Client self-books a slot in Calendly.**
-Because Calendly is connected directly to the rep's calendar, only genuinely free slots are exposed. The client picks a time and confirms. Calendly automatically:
+**4. Client self-books a slot in Cal.com.**
+Because cal.com is connected directly to the rep's calendar, only genuinely free slots are exposed. The client picks a time and confirms cal.com automatically:
 - Creates the calendar event in the rep's Google/Outlook calendar
 - Sends confirmation and reminder emails to both the client and the rep
 - Generates the meeting link (e.g. Google Meet / Zoom) and adds it to the invite
 
 **5. Process advances to step 5.4.**
-Once the email has been dispatched by the Service Task, Camunda continues immediately to *Specify Needs with Clients*. The booking itself is handled outside Camunda by Calendly, so when the time of the call arrives, the rep simply opens the user task that has been waiting for them and starts the conversation with full context already retrieved from the database (see 5.4).
+Once the email has been dispatched by the Service Task, Camunda continues immediately to *Specify Needs with Clients*. The booking itself is handled outside Camunda by cal.com, so when the time of the call arrives, the rep simply opens the user task that has been waiting for them and starts the conversation with full context already retrieved from the database (see 5.4).
 
----
 
 #### Tools and Configuration
 
 | Tool | Role in step 5.3 |
 | :--- | :--- |
 | **Camunda** | Hosts the Service Task that triggers the integration. |
-| **Make.com** | Receives the trigger from Camunda, looks up the rep's Calendly link in the CRM, and sends the email via Gmail. |
+| **Make.com** | Receives the trigger from Camunda, looks up the rep's cal.com link in the CRM, and sends the email via Gmail. |
 | **Gmail** | Delivers the booking email to the client from the corporate domain. |
-| **Calendly** | Hosts the per-rep booking pages, exposes only real-time free slots, books the meeting directly into the rep's calendar. |
-| **CRM (PostgreSQL)** | Stores each Sales Representative's personal Calendly link in the `employee` table. |
+| **cal.com** | Hosts the per-rep booking pages, exposes only real-time free slots, books the meeting directly into the rep's calendar. |
+| **CRM (PostgreSQL)** | Stores each Sales Representative's personal cal.com link in the `employee` table. |
 
----
 
 #### Setup Steps (One-Time Configuration)
 
 For this step to work end-to-end, the following one-time setup is required:
 
-1. **In Calendly** — for each Sales Representative, create a 30-minute event type called *AlpineTech Consultation* and connect it to their Google/Outlook calendar. Copy the resulting personal link.
-2. **In the CRM** — add a `calendly_link` column to the `employee` table and populate it with each rep's link.
+1. **In cal.com** — for each Sales Representative, create a 30-minute event type called *AlpineTech Consultation* and connect it to their Google/Outlook calendar. Copy the resulting personal link.
+2. **In the CRM** — add a `cal.com_link` column to the `employee` table and populate it with each rep's link.
 3. **In Make.com** — build a scenario with three modules:
    - **Webhook (Custom)** — receives the payload from Camunda.
-   - **PostgreSQL → Select rows** — fetches the rep's `calendly_link` and `email` using `employeeId`.
-   - **Gmail → Send an email** — sends the booking email to the client, with the Calendly link inserted via Make variables.
+   - **PostgreSQL → Select rows** — fetches the rep's `cal.com_link` and `email` using `employeeId`.
+   - **Gmail → Send an email** — sends the booking email to the client, with the cal.com link inserted via Make variables.
 4. **In Camunda Modeler** — configure the Service Task `Send email with available consultation slots` as an HTTP connector (or external task) that calls the Make webhook URL with the lead payload.
 
----
 
 
 ### 5.4 Specify Needs with Client

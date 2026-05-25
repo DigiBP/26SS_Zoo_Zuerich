@@ -41,6 +41,45 @@
 | Charuta Pande | [charuta.pande@fhnw.ch](mailto:charuta.pande@fhnw.ch) |
 | Devid Montecchiari | [devid.montecchiari@fhnw.ch](mailto:devid.montecchiari@fhnw.ch) |
 
+## Repository Structure
+
+| Path | Description |
+| :--- | :--- |
+| `README.md` | This document (full project documentation). |
+| `resources/bpmn_models/` | All BPMN process models and Camunda form files. |
+| `resources/bpmn_models/Alpine Tech Solutions_AS-IS process.bpmn` | The original, non-digitalized AS-IS process. |
+| `resources/bpmn_models/Alpine Tech Solutions_TO-BE process.bpmn` | The digitalized TO-BE process (conceptual model). |
+| `resources/bpmn_models/Alpine Tech Solutions Lead Process.bpmn` | The executable Camunda process deployed for the prototype. |
+| `resources/bpmn_models/*.form` | The Camunda user task forms (booking confirmation, quote creation, customer communication). |
+| `Images/` | Screenshots referenced throughout this documentation. |
+
+> **Note on the process models:** The *TO-BE process* is the conceptual target model. The *Lead Process* file is the actual executable model deployed to the Camunda engine for the working prototype.
+
+## How to Run and Test the Process
+
+The digitalized process spans several integrated systems (Camunda, Make, a PostgreSQL database, Google Forms, Cal.com, and CustomJS). The cloud integrations (Make scenarios, database) are already configured and live. Tofo llow the process end to end:
+
+### Triggering the process
+
+1. Open the contact form: [AlpineTech Contact Form](https://docs.google.com/forms/d/e/1FAIpQLSdGfdGSBaz-DSek2og8MKrBVoiu1B48YRsy3M5m94WbBHbJmg/viewform)
+2. Submit the form with test data. **Use a real email address you can access** (the consultation invitation and the quote PDF will be sent there).
+3. Within a short interval (Maximum of 15 Minutes, as the intake trigger is polling-based), a new process instance is created in Camunda, and a customer and lead record are written to the database.
+
+### Following the process in Camunda
+
+4. Open the [Camunda Tasklist](https://digibp.engine.martinlab.science/camunda/app/tasklist/default/#/?filter=f0945b62-643a-11ef-8ae6-fa163ee583d0&sorting=%5B%7B%22sortBy%22:%22created%22,%22sortOrder%22:%22desc%22%7D%5D) of the Tenant 26DIGIBP14. The process will have generated a user task for the assigned sales representative.
+5. Work through the user tasks in sequence:
+   - **Confirm Booking Status** — confirm whether the customer booked a consultation.
+   - **Log Communication** — record one or more customer conversations. Choose `followUp` to log another, or `createQuote` to proceed.
+   - **Enter Quote Details** — compile the quote by selecting services and quantities.
+   - **Confirm Quote Status** — record whether the customer accepted the quote.
+6. After the quote step, a PDF quote is generated and emailed to the address submitted in the contact form.
+
+### Inspecting the Make scenarios
+
+Each automated step is implemented as a Make scenario. Read-only links to all
+scenarios are provided in the relevant sections of this document (5.1–5.5).
+
 ## 1. Introduction
 
 AlpineTech Solutions is a Swiss-based technology company headquartered in Olten. The company provides IT services for small and medium-sized enterprises across Switzerland, Germany, and Austria. With approximately 200 employees, including a sales department of 10 representatives, AlpineTech Solutions has experienced rapid growth over the past three years.
@@ -57,7 +96,7 @@ The sales department currently manages leads, customer information, and sales op
 
 Furthermore, communication with customers is handled primarily through email without a centralized record of interactions. As a result, when sales representatives are absent or accounts are reassigned, valuable information about client conversations and negotiations is often lost.
 
-Sales managers also face difficulties obtaining an accurate overview of the sales pipeline. Weekly sales reports are manually compiled from different spreadsheets, manual presentation creature which consumes considerable time and often leads to outdated or inaccurate forecasts.
+Sales managers also face difficulties obtaining an accurate overview of the sales pipeline. Weekly sales reports are manually compiled from different spreadsheets, manual presentation creation which consumes considerable time and often leads to outdated or inaccurate forecasts.
 
 These issues have resulted in several operational problems:
 
@@ -280,7 +319,7 @@ After the invitation has been sent, the process must wait for the customer to re
 This construct prevents dead process instances: a lead that never responds does not
 remain open indefinitely but is automatically closed after a defined period.
 
-### Design Rationale
+#### Design Rationale
 
 **Why one Cal.com account with multiple event types.** For the prototype, all representatives' event types are hosted under a single Cal.com account. This was a pragmatic decision that keeps the setup within the free tier while still presenting each customer with a representative-specific link. Crucially, the data model — one `calcom_link` per employee — is correct independently of this simplification. In a production setting, each representative would have their own calendar, and only the stored links would change; the process itself would remain unaltered.
 
@@ -288,7 +327,7 @@ remain open indefinitely but is automatically closed after a defined period.
 
 **Why a timer-based timeout.** Without a time limit, a lead whose customer never responds would leave a process instance running forever. The interrupting boundary timer guarantees that unresponsive leads are closed automatically after 14 days, keeping the set of active process instances clean and meaningful.
 
-### Known Limitations
+#### Known Limitations
 
 - Because all event types share a single underlying Cal.com account, they also share availability. This is a cosmetic separation rather than true per-representative scheduling. In production, each representative would have an independent calendar.
 - Cal.com event types are provisioned manually for each employee. Adding a new representative requires creating a matching event type and populating the `calcom_link` field. This is acceptable for the fixed roster of the prototype.
@@ -328,7 +367,7 @@ The decision gateway has three outcomes:
 - **`createQuote`** – the requirements are clear; the process proceeds to quote creation.
 - **`closeLead`** – the customer is no longer interested; the lead is closed.
 
-### Design Rationale
+#### Design Rationale
 
 **Why communications are persisted centrally.** A central motivation for digitalizing this process is *continuity*. If all customer communication exists only in the heads or personal inboxes of individual sales representatives, the knowledge is lost the moment that representative is unavailable. By persisting every interaction in a central database, the complete history of a lead is preserved independently of any single person. If a representative falls ill or leaves the company, a colleague can take over the lead with full context.
 
@@ -342,7 +381,7 @@ The decision gateway has three outcomes:
 
 **Why the logging employee is derived from the lead.** Each communication records which employee logged it. Rather than relying on the employee identifier being passed as a process variable, this value is read directly from the `lead` record (via a subquery) at insertion time. The lead already holds the assigned representative, so this is the single reliable source of truth and avoids a dependency on a variable that the connector did not propagate reliably.
 
-### Known Limitations
+#### Known Limitations
 
 - The communication history is displayed in the form using a table component. This works reliably for single-line notes. Multi-line notes (notes containing line breaks) caused the underlying data to be transmitted as invalid JSON, which the table component could not render. The cause couldn't reliably be pinpointed. As a mitigation, communication notes are captured as single-line entries, which prevents the line breaks that trigger the issue.
 - A fully robust solution would require a connector that exposes the raw response body for manual parsing, allowing the history to be rendered reliably regardless of note formatting.

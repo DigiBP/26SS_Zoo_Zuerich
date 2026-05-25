@@ -220,7 +220,7 @@ representative is responsible for it. Rather than relying on manual triage, the 
 
 The assignment is implemented as a dedicated Camunda service task ("Choose Sales Representative"), separate from the lead intake. The service task calls its own Make scenario via the API connector. The Make scenario executes a single SQL query against the database that selects the most suitable employee, and then writes the chosen employee onto the lead record via an `UPDATE` statement.
 
-![Screenshot: The Make scenario for sales representative assignment](Images/Register_Lead_Make_Process.png)
+![Screenshot: The Make scenario for sales representative assignment](Images/Assign_Lead_Employee_Make_Process.png)
 
 [(Link to Make Scenario)](https://eu1.make.com/public/shared-scenario/jth1Z7T6Afw/lead-assign-employee)
 

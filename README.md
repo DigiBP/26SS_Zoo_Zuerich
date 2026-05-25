@@ -188,6 +188,8 @@ a polling-based trigger: Make checks for new form responses at a fixed interval.
 
 ![Screenshot: The Make scenario for lead registration](Images/Register_Lead_Make_Process.png)
 
+[(Link to Make Scenario)](https://eu1.make.com/public/shared-scenario/vDg2DIatuBN/integration-google-sheets)
+
 From this point onward, the Camunda Lead-process owns and orchestrates the workflow.
 
 #### Design Rationale
@@ -219,6 +221,8 @@ representative is responsible for it. Rather than relying on manual triage, the 
 The assignment is implemented as a dedicated Camunda service task ("Choose Sales Representative"), separate from the lead intake. The service task calls its own Make scenario via the API connector. The Make scenario executes a single SQL query against the database that selects the most suitable employee, and then writes the chosen employee onto the lead record via an `UPDATE` statement.
 
 ![Screenshot: The Make scenario for sales representative assignment](Images/Register_Lead_Make_Process.png)
+
+[(Link to Make Scenario)](https://eu1.make.com/public/shared-scenario/jth1Z7T6Afw/lead-assign-employee)
 
 The selection query evaluates all employees and ranks them by three criteria, in
 order of priority:
@@ -255,6 +259,8 @@ The step is implemented as a dedicated Camunda service task, which calls a Make 
 2. A personalized invitation email is sent to the customer via the Gmail module. The email addresses the customer by name, names the assigned representative, and contains that representative's Cal.com booking link.
 
 ![Screenshot: The Make scenario for sending the Cal.com link](Images/Send_Appointment_Make_Process.png)
+
+[(Link to Make Scenario)](https://eu1.make.com/public/shared-scenario/78PiU1ChrDC/send-appointment-email)
 
 ![Screenshot: The invitation email](Images/Consultion_Booking_Email.png)
 
@@ -312,6 +318,9 @@ The needs-clarification phase is modeled as a **loop** in the process. One itera
 ![Screenshot: The communication Sub-Process in the BPMN](Images/Specify_Needs_Sub_Process.png)
 
 ![Screenshot: The "Log Communication" task form](Communications_Form.png)
+
+[(Fetch Communications Make Scenario)](https://eu1.make.com/public/shared-scenario/xWS9uv5jaLq/fetch-past-communications)
+[(Safe New Communication Make Scenario)](https://eu1.make.com/public/shared-scenario/I4XP9RZkbTY/safe-new-communication)
 
 The decision gateway has three outcomes:
 
@@ -374,7 +383,7 @@ When the form is submitted, the "Generate and Send Quote" service task calls a M
 
 To produce the actual quote document, the Make scenario first retrieves the persisted quote together with all line items. The monetary totals — subtotal, VAT amount, and gross total — are calculated within this SQL query. The line items are then assembled into an HTML fragment, which is passed, together with all header data, to **CustomJS**, an HTML-to-PDF service. CustomJS renders a professionally formatted PDF quote from a predefined HTML/CSS template.
 
-![Screenshot: A generated quote PDF](Example_Generated_Quote.png)
+![Screenshot: A generated quote PDF](Images/Example_Generated_Quote.png)
 
 #### Email Delivery
 
@@ -383,6 +392,10 @@ Finally, the generated PDF is sent to the customer as an email attachment via th
 #### Confirming the Outcome
 
 After the quote has been sent, the process reaches the "Confirm Quote Status" user task. The sales representative records whether the customer accepted the quote. An exclusive gateway then routes the process: if the quote was accepted, the project is handed over to the developer team; if not, the lead is closed.
+
+![Generate and Send Quote PDF Make Scenario](Images/Insert_Quote_Make_Process.png)
+
+[(Link to Make Scenario)](https://eu1.make.com/public/shared-scenario/mtNCKEDnkRS/insert-quote)
 
 #### Design Rationale
 

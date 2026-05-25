@@ -170,97 +170,125 @@ The full TO-BE process model can be viewed and edited in Camunda Modeler:
 
 ### 5.1 Register a Lead
 
-The client fills in a Google Form that captures all required lead information (name, company, contact details, region, and a brief description of their needs). Google Forms directly addresses this by capturing structured data automatically, eliminating the manual entry step that causes duplicates and data loss. There is no learning curve both the sales team managing the form and clients filling it in are likely already familiar with Google Forms.
+#### Overview
 
-Integration Flow
+The lead registration is the entry point of the digitalized Lead-process. A potential customer who is interested in the company's services submits a contact form. In a production setting this form would be embedded directly in the company website; for this prototype it is implemented as a Google Form. The submission captures the prospect's details and automatically triggers the downstream workflow in Camunda.
 
-Client submits the Google Form, the submission is recorded in the linked Google Sheet automatically.
-Make  triggers on new row a Make scenario monitors the Google Sheet for new entries. As soon as a new row appears (i.e. a form submission), it fires.
-Make sends the data to the CRM, the scenario maps the form fields to the CRM database fields and creates a new lead record via API call.
-Camunda process instance is started, Make also triggers the Camunda REST API to start a new process instance, passing the lead data as process variables.
-Process continues to step 5.2 the lead is now registered centrally and the DMN decision table can assign it to the right Sales Representative.
+![Screenshot: The Google contact form](Images/Contact_Form.png)
+
+The complete Google Form can be viewed and Submitted [here](https://docs.google.com/forms/d/e/1FAIpQLSdGfdGSBaz-DSek2og8MKrBVoiu1B48YRsy3M5m94WbBHbJmg/viewform).
+
+#### Implementation
+
+The contact form is implemented as a Google Form. The linked Make scenario uses a **Google [Watch Responses] trigger** to detect new submissions. This is
+a polling-based trigger: Make checks for new form responses at a fixed interval. Once a new submission is detected, the scenario carries out three steps in sequence:
+
+
+1. **Customer persistence** – A new record is inserted into the `customer` table of our PostgreSQL database (hosted on Neon). During this step, the free-text region input is normalized into a standardized country code (`ch`, `de`, `at`), so that downstream steps can rely on consistent values.
+2. **Lead persistence** – A new record is inserted into the `lead` table and linked to the customer created in the previous step.
+3. **Process start** – A REST call is made to the Camunda engine to start a new process instance. The relevant lead and customer data is passed along as process variables, so that subsequent tasks can access it without re-querying the database.
+
+![Screenshot: The Make scenario for lead registration](Images/Register_Lead_Make_Process.png)
+
+From this point onward, the Camunda Lead-process owns and orchestrates the workflow.
+
+#### Design Rationale
+
+**Trigger mechanism — polling vs. event-driven:** Ideally, the process would react to a form submission instantly. We therefore investigated event-driven alternatives, including triggering the scenario directly when a row is added to the linked response spreadsheet. However, we were unable to get the instant trigger working reliably within the project's scope. We therefore use Make's polling-based Google trigger, which checks for new submissions at a fixed interval. For the purpose of this prototype, a short polling delay is an acceptable trade-off: the lead is still processed automatically and without manual intervention, only with a brief latency between submission and process start. A fully event-driven trigger — for example via a Google Apps Script `onFormSubmit` event posting to a Make webhook — is a clear next step for a production deployment.
+
+Customer and lead are stored as **separate records** because they represent different entities: a customer is a company or person, whereas a lead represents a single instance of sales interest. This separation reflects correct data modeling and would, for example, allow a returning customer to generate a second, independent lead.
+
+The **region normalization** is performed once, at insertion time, rather than repeatedly later. This ensures that every downstream consumer — such as the automatic sales representative assignment and the VAT logic during quote creation — can rely on clean, consistent country codes.
+
+Finally, core data is passed to Camunda **as process variables** when the instance is started. This makes the information directly available to later user tasks and forms without additional database lookups.
+
+#### Known Limitations
+
+- **The lead intake is polling-based rather than event-driven.** Make's Google  connector checks for new submissions at a fixed interval, introducing a short latency between form submission and process start. An event-driven trigger (e.g. an Apps Script `onFormSubmit` webhook) would eliminate this latency and is a recommended improvement.
+- For the prototype, the Google Form stands in for a form embedded in the company website. The integration pattern would remain identical — the embedded form would post to the same webhook.
+
+---
 
 ### 5.2 Choose Sales Representative and Assign Lead
 
-Once the lead is registered, the process triggers an automated routing mechanism to select the most appropriate Sales Representative. This eliminates the need for the Sales Manager to manually distribute new leads.
+#### Overview
 
-**Automated Routing (Service Task):**
-Instead of a static DMN table, the system uses a dynamic, event-driven integration via **Make.com**. 
-* **Trigger:** The Camunda process sends a payload containing the `leadId` to a Custom Webhook in Make.com.
-* **Intelligent Selection:** Make.com executes an advanced SQL query against the PostgreSQL CRM database. By joining multiple tables (`employee`, `lead`, `customer`, `specialization`), the system prioritizes and selects the best representative based on three dynamic factors:
-  1. **Region Matching:** Prioritizes employees matching the customer's region.
-  2. **Specialization Matching:** Prioritizes employees matching the customer's industry branch.
-  3. **Workload Balancing:** Calculates the number of active leads assigned to each matching employee and selects the one with the lowest count, ensuring an even distribution of work.
-* **Direct Database Update & Process Continuation:** Once the optimal representative is identified, Make.com executes an `UPDATE` statement directly on the CRM database to link the lead to the assigned employee. A Webhook Response then sends the `employeeId` back to Camunda, which instantly triggers the next step (sending the automated appointment request).
+Once a lead has been registered, the process must determine which sales
+representative is responsible for it. Rather than relying on manual triage, the assignment is performed automatically based on defined business criteria. This ensures that leads are assigned consistently, immediately, and without a human bottleneck.
 
+#### Implementation
+
+The assignment is implemented as a dedicated Camunda service task ("Choose Sales Representative"), separate from the lead intake. The service task calls its own Make scenario via the API connector. The Make scenario executes a single SQL query against the database that selects the most suitable employee, and then writes the chosen employee onto the lead record via an `UPDATE` statement.
+
+![Screenshot: The Make scenario for sales representative assignment](Images/Register_Lead_Make_Process.png)
+
+The selection query evaluates all employees and ranks them by three criteria, in
+order of priority:
+
+1. **Region match** – the representative operates in the customer's region.
+2. **Industry / specialization match** – the representative is specialized in the customer's industry.
+3. **Current workload** – as a tie-breaker, the representative with the fewest currently assigned leads is preferred.
+
+Importantly, these criteria are applied as a **ranking**, not as a filter. The query therefore always returns a representative, even if no employee perfectly matches the  region and industry of the customer.
+
+#### Design Rationale
+
+**Why a SQL query instead of Camunda DMN.** Camunda offers DMN (Decision Model and Notation) as a native mechanism for modeling decision logic in decision tables. We deliberately chose not to use DMN for this step. A DMN decision table is well suited to decisions that map a fixed set of *input values* to *output values* through static rules. The sales representative assignment, however, is not a static rule evaluation: it requires querying live data (the set of employees, their specializations, and their current lead counts) and performing a relative ranking across all candidates, including an aggregation (counting assigned leads per employee). This kind of data-driven, comparative selection is naturally expressed in SQL and would be awkward or impossible to express in a DMN table, which has no access to the database and no concept of "rank all rows and pick the best." Using a SQL query keeps the decision logic close to the data it depends on and allows the assignment rules to evolve simply by adjusting the query.
+
+**Why these three criteria, in this order.** Region is prioritized first because a representative should operate within the customer's market. Industry specialization is second, ensuring domain expertise where possible. Workload is used only as a tie-breaker, so that among otherwise equally suitable representatives, leads are distributed evenly and no single representative becomes overloaded.
+
+**Why the query always returns a representative.** The criteria are applied as a ranking rather than a hard filter. If the selection were a strict filter and no employee matched both region and industry, the query would return nothing and the process would stall with an unassigned lead. By ranking instead of filtering, the process always proceeds: a slightly imperfect assignment is preferable to a blocked process instance.
+
+**Why the result is persisted to the lead record.** The chosen representative is written directly onto the `lead` table. The lead record thereby becomes the single source of truth for ownership of the lead, and every subsequent step can reliably determine the responsible representative by reading the lead.
+
+---
 
 ### 5.3 Send Email with Available Consultation Slots
 
-Once the lead has been assigned to a Sales Representative in step 5.2, the process advances to scheduling a consultation call. In the AS-IS process, slots were proposed manually by email, which created long back-and-forth threads and frequent conflicts. In the TO-BE process this step is fully automated: a **Service Task** in Camunda sends the client a Gmail containing a personal **Cal.com** booking link, and the client self-books a slot directly into the assigned Sales Representative's live calendar.
+#### Overview
 
+Once a sales representative has been assigned, the customer is invited to schedule a first consultation. This is the first direct customer touchpoint and bridges the automated intake with a human conversation. The customer receives a personalized email containing a booking link for their specifically assigned representative.
 
-#### BPMN Element
+#### Implementation
 
-In the BPMN model, this step is implemented as a single **Service Task** named **`Send email with available consultation slots`** in the *Sales Representative* lane. It sits between the user task *Assign Lead to Sales Rep.* and the user task *Specify Needs with Clients*. The task is automated — no human action is required inside Camunda; the rest of the work happens externally in Make.com, Gmail, and cal.com. The outcome (the actual meeting booking by the client) is sent back to the assigned Sales Representative's calendar by cal.com, so the rep is ready to start *Specify Needs with Clients* at the agreed time.
+The step is implemented as a dedicated Camunda service task, which calls a Make scenario via a webhook. The Make scenario performs the following:
 
+1. Based on the `leadId`, a single SQL query retrieves both the customer's details and the assigned representative's details — including the representative's personal Cal.com booking link, which is stored in the `calcom_link` column of the `employee` table.
+2. A personalized invitation email is sent to the customer via the Gmail module. The email addresses the customer by name, names the assigned representative, and contains that representative's Cal.com booking link.
 
-#### Integration Flow
+![Screenshot: The Make scenario for sending the Cal.com link](Images/Send_Appointment_Make_Process.png)
 
-<img width="1754" height="506" alt="image" src="https://github.com/user-attachments/assets/ac3931ff-060f-410f-b237-920c8ca94b40" />
+![Screenshot: The invitation email](Images/Consultion_Booking_Email.png)
 
-**1. Camunda triggers the Service Task.**
-After *Assign Lead to Sales Rep.* writes the `employeeId` of the assigned Sales Representative into the CRM, the Service Task `Send email with available consultation slots` fires. It sends a payload to a Custom Webhook in **Make.com** containing:
-- `leadId`
-- `clientName`
-- `clientEmail`
-- `employeeId` (the assigned Sales Representative)
+Each employee has their own Cal.com event type ("Initial Consultation with [Name]"), all hosted under a single shared Cal.com account. The corresponding booking link is stored per employee in the database.
 
-**2. Make.com resolves the correct cal.com link.**
-The Make scenario queries the CRM (PostgreSQL `employee` table) for the assigned Sales Representative and retrieves their personal **Cal.com event link**`). Each Sales Rep has a dedicated Cal.com event type connected to their own Google/Outlook calendar, so the booking always lands with the right person.
+#### Waiting for the Booking — Human Task with a Timer
 
-**3. Make.com sends the Gmail.**
-<img width="1369" height="522" alt="image" src="https://github.com/user-attachments/assets/d315c2f9-a9ea-4b2a-97b0-b222960bc59f" />
+After the invitation has been sent, the process must wait for the customer to react. This is modeled as a **user task** ("Confirm Booking Status") assigned to the sales representative, with an **interrupting boundary timer event** attached.
 
-Using the Gmail module, Make composes and sends a personalised email to the client containing:
-- A short introduction from the assigned Sales Representative
-- The Cal.com booking link
-- The purpose and expected duration of the call
-- A fallback contact for any issues with the link
+- If the customer books a consultation, the representative completes the user task
+  and the process continues to the needs-clarification phase.
+- If no booking occurs, the boundary timer fires after **14 days**, the user task is
+  cancelled, and the lead is automatically closed as "unresponsive".
 
-**4. Client self-books a slot in Cal.com.**
-Because cal.com is connected directly to the rep's calendar, only genuinely free slots are exposed. The client picks a time and confirms cal.com automatically:
-- Creates the calendar event in the rep's Google/Outlook calendar
-- Sends confirmation and reminder emails to both the client and the rep
-- Generates the meeting link (e.g. Google Meet / Zoom) and adds it to the invite
+This construct prevents dead process instances: a lead that never responds does not
+remain open indefinitely but is automatically closed after a defined period.
 
-**5. Process advances to step 5.4.**
-Once the email has been dispatched by the Service Task, Camunda continues immediately to *Specify Needs with Clients*. The booking itself is handled outside Camunda by cal.com, so when the time of the call arrives, the rep simply opens the user task that has been waiting for them and starts the conversation with full context already retrieved from the database (see 5.4).
+### Design Rationale
 
+**Why one Cal.com account with multiple event types.** For the prototype, all representatives' event types are hosted under a single Cal.com account. This was a pragmatic decision that keeps the setup within the free tier while still presenting each customer with a representative-specific link. Crucially, the data model — one `calcom_link` per employee — is correct independently of this simplification. In a production setting, each representative would have their own calendar, and only the stored links would change; the process itself would remain unaltered.
 
-#### Tools and Configuration
+**Why a manual confirmation instead of automatic booking detection.** Ideally, a booking on Cal.com would be detected automatically (via a Cal.com webhook) and correlated back to the running process instance. We deliberately scoped this out: the fully automated variant requires a webhook integration and message correlation, which adds significant integration complexity. Instead, the sales representative — who is notified of a real booking by Cal.com anyway — manually confirms the booking by completing the user task. The process model already accommodates the automated variant: the user task could later be replaced by a message catch event without restructuring the surrounding flow.
 
-| Tool | Role in step 5.3 |
-| :--- | :--- |
-| **Camunda** | Hosts the Service Task that triggers the integration. |
-| **Make.com** | Receives the trigger from Camunda, looks up the rep's cal.com link in the CRM, and sends the email via Gmail. |
-| **Gmail** | Delivers the booking email to the client from the corporate domain. |
-| **cal.com** | Hosts the per-rep booking pages, exposes only real-time free slots, books the meeting directly into the rep's calendar. |
-| **CRM (PostgreSQL)** | Stores each Sales Representative's personal cal.com link in the `employee` table. |
+**Why a timer-based timeout.** Without a time limit, a lead whose customer never responds would leave a process instance running forever. The interrupting boundary timer guarantees that unresponsive leads are closed automatically after 14 days, keeping the set of active process instances clean and meaningful.
 
+### Known Limitations
 
-#### Setup Steps (One-Time Configuration)
+- Because all event types share a single underlying Cal.com account, they also share availability. This is a cosmetic separation rather than true per-representative scheduling. In production, each representative would have an independent calendar.
+- Cal.com event types are provisioned manually for each employee. Adding a new representative requires creating a matching event type and populating the `calcom_link` field. This is acceptable for the fixed roster of the prototype.
+- A booking made *after* the 14-day timeout would still reach the representative via Cal.com, but the corresponding lead would already be closed. In the current prototype this edge case is handled manually. The architecturally correct solution would treat a late booking as a returning lead and start a fresh process instance.
 
-For this step to work end-to-end, the following one-time setup is required:
-
-1. **In cal.com** — for each Sales Representative, create a 30-minute event type called *AlpineTech Consultation* and connect it to their Google/Outlook calendar. Copy the resulting personal link.
-2. **In the CRM** — add a `cal.com_link` column to the `employee` table and populate it with each rep's link.
-3. **In Make.com** — build a scenario with three modules:
-   - **Webhook (Custom)** — receives the payload from Camunda.
-   - **PostgreSQL → Select rows** — fetches the rep's `cal.com_link` and `email` using `employeeId`.
-   - **Gmail → Send an email** — sends the booking email to the client, with the cal.com link inserted via Make variables.
-4. **In Camunda Modeler** — configure the Service Task `Send email with available consultation slots` as an HTTP connector (or external task) that calls the Make webhook URL with the lead payload.
-
-
+---
 
 ### 5.4 Specify Needs with Client
 

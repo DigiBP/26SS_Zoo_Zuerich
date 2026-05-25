@@ -206,6 +206,8 @@ In the BPMN model, this step is implemented as a single **Service Task** named *
 
 #### Integration Flow
 
+<img width="1754" height="506" alt="image" src="https://github.com/user-attachments/assets/ac3931ff-060f-410f-b237-920c8ca94b40" />
+
 **1. Camunda triggers the Service Task.**
 After *Assign Lead to Sales Rep.* writes the `employeeId` of the assigned Sales Representative into the CRM, the Service Task `Send email with available consultation slots` fires. It sends a payload to a Custom Webhook in **Make.com** containing:
 - `leadId`

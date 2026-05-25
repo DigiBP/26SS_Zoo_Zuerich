@@ -116,7 +116,7 @@ The current sales process at AlpineTech Solutions involves three internal roles 
 
 The diagram below shows the full AS-IS sales process at AlpineTech Solutions:
 
-![Alpine Tech Solutions AS-IS Process](Camunda/Alpine_Tech_Solutions_AS-IS%20process.png)
+![Alpine Tech Solutions AS-IS Process](Images/Alpine_Tech_Solutions_AS-IS_Process.png)
 
 The full process model can be viewed and edited in Camunda Modeler:
 [Alpine Tech Solutions — AS-IS process (BPMN)](resources/bpmn_models/Alpine%20Tech%20Solutions_AS-IS%20process.bpmn)
@@ -124,8 +124,6 @@ The full process model can be viewed and edited in Camunda Modeler:
 #### Project Focus: Digitalisation of the First Part of the Process
 
 While the AS-IS process covers the entire sales lifecycle, **this project focuses on the digitalisation of the process from the moment a lead request is received through to the creation of a quote**. This scope covers lead registration, lead assignment, consultation scheduling, needs definition, and quote creation — the steps with the highest concentration of manual effort, coordination overhead, and risk of data loss.
-
-![Focus Process](Camunda/Alpine_Tech_Solutions_AS-IS_process_focus_%20process.png)
 
 ---
 
@@ -161,7 +159,7 @@ The table below maps each identified bottleneck from the AS-IS process to its au
 
 The TO-BE process replaces the fragmented, manual workflow with a centralised, automated sales pipeline orchestrated through **Camunda BPMN**. The digitised scope covers the full journey from an incoming lead request to the creation of a quote.
 
-![Alpine Tech Solutions TO-BE Process](Camunda/Alpine%20Tech%20Solutions_TO-BE_focus_process.png)
+![Alpine Tech Solutions TO-BE Process](Images/Alpine_Tech_Solutions_TO-BE_Process.png)
 
 The full TO-BE process model can be viewed and edited in Camunda Modeler:
 [Alpine Tech Solutions — TO-BE process (BPMN)](resources/bpmn_models/Alpine%20Tech%20Solutions_TO-BE%20process.bpmn)

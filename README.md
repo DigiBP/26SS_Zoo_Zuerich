@@ -219,6 +219,8 @@ After *Assign Lead to Sales Rep.* writes the `employeeId` of the assigned Sales 
 The Make scenario queries the CRM (PostgreSQL `employee` table) for the assigned Sales Representative and retrieves their personal **Cal.com event link**`). Each Sales Rep has a dedicated Cal.com event type connected to their own Google/Outlook calendar, so the booking always lands with the right person.
 
 **3. Make.com sends the Gmail.**
+<img width="1369" height="522" alt="image" src="https://github.com/user-attachments/assets/d315c2f9-a9ea-4b2a-97b0-b222960bc59f" />
+
 Using the Gmail module, Make composes and sends a personalised email to the client containing:
 - A short introduction from the assigned Sales Representative
 - The Cal.com booking link

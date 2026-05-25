@@ -175,7 +175,7 @@ The solution targets the following outcomes:
 - Centralised, real-time lead tracking replacing individual Excel files
 - Automated lead assignment based on predefined rules (region, workload)
 - Automated scheduling and follow-up reminders to prevent leads from stalling
-- Structured quote generation with manager approval flow
+- Structured quote generation
 - Full interaction history accessible to the entire sales team
 
 ---

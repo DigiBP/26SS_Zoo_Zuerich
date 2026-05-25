@@ -182,9 +182,16 @@ Process continues to step 5.2 the lead is now registered centrally and the DMN d
 
 ### 5.2 Choose Sales Representative and Assign Lead
 
-Once the lead is registered, the process triggers a **DMN decision table** that evaluates predefined rules (e.g. region, workload) and automatically selects the most appropriate Sales Representative. The lead is assigned without any manual intervention from the Sales Manager, and the assigned representative receives an automated notification to begin follow-up.
+Once the lead is registered, the process triggers an automated routing mechanism to select the most appropriate Sales Representative. This eliminates the need for the Sales Manager to manually distribute new leads.
 
----
+**Automated Routing (Service Task):**
+Instead of a static DMN table, the system uses a dynamic, event-driven integration via **Make.com**. 
+* **Trigger:** The Camunda process sends a payload containing the `leadId` to a Custom Webhook in Make.com.
+* **Intelligent Selection:** Make.com executes an advanced SQL query against the PostgreSQL CRM database. By joining multiple tables (`employee`, `lead`, `customer`, `specialization`), the system prioritizes and selects the best representative based on three dynamic factors:
+  1. **Region Matching:** Prioritizes employees matching the customer's region.
+  2. **Specialization Matching:** Prioritizes employees matching the customer's industry branch.
+  3. **Workload Balancing:** Calculates the number of active leads assigned to each matching employee and selects the one with the lowest count, ensuring an even distribution of work.
+* **Direct Database Update & Process Continuation:** Once the optimal representative is identified, Make.com executes an `UPDATE` statement directly on the CRM database to link the lead to the assigned employee. A Webhook Response then sends the `employeeId` back to Camunda, which instantly triggers the next step (sending the automated appointment request).
 
 ### 5.3 Send Email with Available Consultation Slots
 

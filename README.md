@@ -262,13 +262,13 @@ The step is implemented as a dedicated Camunda service task, which calls a Make 
 
 [(Link to Make Scenario)](https://eu1.make.com/public/shared-scenario/78PiU1ChrDC/send-appointment-email)
 
-![Screenshot: The invitation email](Images/Consultion_Booking_Email.png)
+![Screenshot: The invitation email](Images/Consultation_Booking_Email.png)
 
 Each employee has their own Cal.com event type ("Initial Consultation with [Name]"), all hosted under a single shared Cal.com account. The corresponding booking link is stored per employee in the database.
 
 #### Waiting for the Booking — Human Task with a Timer
 
-![Screenshot: Booking confirmation task](Confirm_Booking_Form.png)
+![Screenshot: Booking confirmation task](Images/Confirm_Booking_Form.png)
 
 After the invitation has been sent, the process must wait for the customer to react. This is modeled as a **user task** ("Confirm Booking Status") assigned to the sales representative, with an **interrupting boundary timer event** attached.
 
@@ -317,7 +317,7 @@ The needs-clarification phase is modeled as a **loop** in the process. One itera
 
 ![Screenshot: The communication Sub-Process in the BPMN](Images/Specify_Needs_Sub_Process.png)
 
-![Screenshot: The "Log Communication" task form](Communications_Form.png)
+![Screenshot: The "Log Communication" task form](Images/Communications_Form.png)
 
 [(Fetch Communications Make Scenario)](https://eu1.make.com/public/shared-scenario/xWS9uv5jaLq/fetch-past-communications)
 [(Safe New Communication Make Scenario)](https://eu1.make.com/public/shared-scenario/I4XP9RZkbTY/safe-new-communication)

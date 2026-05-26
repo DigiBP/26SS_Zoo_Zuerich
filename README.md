@@ -481,24 +481,66 @@ Beyond the individual outcomes, the prototype demonstrates that the targeted sco
 
 The prototype covers the targeted scope end-to-end, but several improvements would strengthen it for production use. The proposals below are grouped by theme and roughly ordered by expected impact.
 
-### 7.1 Intake and Scheduling
+---
 
-- **Event-driven lead intake.** The current Google Forms trigger is polling-based, introducing up to ~15 minutes of latency between submission and process start. Replacing it with an Apps Script `onFormSubmit` handler that posts directly to a Make webhook would make intake effectively instantaneous. In a production deployment, the Google Form would be replaced by a form embedded in the company website posting to the same webhook — the integration pattern downstream would not change.
-- **Automated booking detection via Cal.com webhooks.** Today, the sales representative manually confirms a booking by completing a user task. A Cal.com webhook correlated to the running process instance (via the lead ID or customer email) would allow the booking to be detected automatically and the user task replaced by a message catch event. The surrounding process model already accommodates this substitution.
-- **Per-representative Cal.com calendars.** All representatives currently share a single Cal.com account, so booking links are cosmetically separated but availability is shared. Moving each representative to an independent calendar would resolve this and is a configuration change rather than a process change — only the `calcom_link` values in the `employee` table would be updated.
-- **Late-booking handling.** A booking that arrives *after* the 14-day timeout currently reaches the representative through Cal.com but lands on a closed lead. Treating such a late booking as a fresh inbound signal — starting a new process instance and linking it to the existing customer record — would close this edge case cleanly.
+## 7. Proposals for Next Improvements
 
-### 7.2 Communication and Quoting
+The prototype delivers a working automation of the lead-to-quote process, but several improvements would increase the business value it generates for AlpineTech Solutions. The proposals below are framed in terms of business impact — time saved, leads won, risk reduced — and roughly ordered by expected return.
 
-- **Robust handling of multi-line communication notes.** Multi-line notes currently break the table rendering in the "Log Communication" form due to invalid JSON in the connector's response. A connector that exposes the raw response body for manual parsing, or a different form component that tolerates richer text, would lift the single-line restriction.
-- **Refresh the communication history within the quote sub-process.** The history shown in the quote form is fetched at the start of the sub-process and therefore omits the most recently logged communication. Re-fetching it immediately before the quote form is rendered would close this small gap.
-- **Quote revisions.** The process supports creating new quotes but not revising existing ones. A revision path that creates a new version of a quote while preserving the original (e.g. `Q-2026-0042-v2`) would reflect a common real-world need and avoid duplicate, unrelated records when a customer requests changes.
-- **Complete the international VAT logic.** The current implementation distinguishes Swiss customers from all others as a deliberate simplification. A production deployment would need to implement the full set of rules applicable to AlpineTech's markets (Switzerland, Germany, Austria), including B2B reverse-charge handling and validation of EU VAT IDs.
+### 7.1 AI-Assisted Sales Workflows
 
-### 7.3 Scope and Operations
+The single largest opportunity to extend the current automation is the integration of ready-made AI solutions into the sales representative's daily work. The process already captures structured data at every step (customer details, communications, service catalog, quotes), which makes it well-positioned to benefit from AI assistance without re-engineering the underlying workflow.
 
-- **Extend the digitalised scope downstream.** The project focused on the highest-impact segment of the AS-IS process — intake through quote creation. Natural follow-on phases are: (a) the order and invoice phase after quote acceptance, (b) the project handover to the technical team, and (c) the sales reporting and pipeline dashboard for sales managers, which was identified as a pain point in [Section 2](#2-problem-description) but is outside the current scope. The central database already contains the structured data needed to power such reporting.
-- **Operational hardening.** For production use, a number of cross-cutting concerns deserve attention: secrets management for API keys currently held in Make connections; monitoring and alerting on failed Make scenarios; retry and dead-letter handling for transient integration failures; an audit log of quote and customer changes; and access control on the Camunda tasklist aligned with the company's roles.
+Concrete, near-term applications worth exploring:
+
+- **Automated meeting note capture.** Ready to use tools with built-in transcription can record and summarise consultation calls. Instead of the sales representative typing notes into the "Log Communication" form after each call, an AI-generated summary could pre-fill the form, leaving the representative only to review and confirm. This alone could save several minutes per call across hundreds of calls per month.
+- **AI-assisted quote drafting.** Based on the captured needs-clarification history, a large language model could propose an initial set of line items from the service catalog along with suggested quantities. The representative reviews, adjusts, and approves — turning quote creation from a composition task into a verification task. This both speeds up quoting and improves consistency across representatives.
+- **Email draft generation.** Customer-facing emails (consultation invitations, follow-ups after a quote is sent, polite re-engagement of unresponsive leads) can be drafted automatically from the lead's context and personalised at scale, while still passing through the representative for sign-off. Needs to be worked on with B2B marketing together.
+- **Lead scoring and prioritisation.** Once enough historical data has accumulated in the central database, an AI scoring model can rank incoming leads by likelihood to convert, helping representatives focus their limited time on the highest-value opportunities. 
+- **Conversational interface for the sales team.** A chat-style assistant connected to the CRM database would let representatives ask natural-language questions ("show me all leads from Germany without a booked consultation") without learning a query language or navigating multiple screens.
+
+The recommended approach is incremental: start with a single high-impact use case — meeting note capture is the strongest candidate, as it directly addresses the manual data-entry bottleneck — measure the time saved and quality delivered, and expand from there. None of these integrations require changes to the core process model; they augment the existing user tasks rather than replace them.
+
+### 7.2 Faster Time-to-Customer
+
+Speed of response is a known driver of lead conversion. Two improvements directly reduce the time between a customer expressing interest and AlpineTech engaging with them:
+
+- **Instant lead intake.** The current intake polls for new submissions and can take up to fifteen minutes to start a process. Switching to an event-driven trigger would make intake effectively instantaneous, so the assignment email reaches the customer within seconds of their submission — while their attention is still on AlpineTech.
+- **Automatic booking detection.** A booking on Cal.com is currently confirmed manually by the representative. Detecting the booking automatically removes a small but recurring administrative step and ensures no booked consultation is ever overlooked because a representative was slow to confirm.
+
+### 7.3 Recovering Lost Revenue
+
+Leads that go cold represent revenue left on the table. The current process closes unresponsive leads after fourteen days, but does little to actively prevent them from going cold in the first place.
+
+- **Automated nudges to unresponsive leads.** Before the 14-day timeout fires, one or two polite reminder emails can be sent automatically, recovering a meaningful share of leads that simply forgot to respond.
+- **Quote revisions instead of new quotes.** When a customer asks for changes, the process currently requires creating a new, unrelated quote. Supporting versioned revisions (e.g. `Q-2026-0042-v2`) preserves the history of the negotiation, looks more professional to the customer, and keeps reporting clean.
+- **Late-booking recovery.** A booking that arrives after the lead has been auto-closed is currently a lost opportunity that has to be handled by hand. Treating it automatically as a returning lead ensures that genuinely interested customers are not dropped because of a timing technicality.
+
+### 7.4 Visibility for Sales Management
+
+The original problem analysis identified the Sales Manager's lack of pipeline visibility as a major pain point. The current scope addresses the operational layer but does not yet surface the data to management.
+
+- **Live sales dashboard.** A dashboard built on the central database would give the Sales Manager real-time visibility into the number of open leads, their stage, expected revenue, win rates per representative, and average time to quote — replacing the weekly manual report compilation described in [Section 2](#2-problem-description).
+- **Forecasting.** With historical data accumulating in the database, basic forecasting (expected closures, expected revenue, capacity planning per representative) becomes possible without additional tooling.
+
+### 7.5 Scaling the Sales Operation
+
+As AlpineTech continues to grow, several improvements support a larger sales organisation without proportional growth in administrative overhead.
+
+- **Per-representative calendars.** All representatives currently share a single Cal.com account. Independent calendars per representative are required to scale beyond the prototype and reflect real availability.
+- **Complete international tax handling.** The current VAT logic is a deliberate simplification. Full handling of Switzerland, Germany, and Austria — including B2B reverse-charge and EU VAT ID validation — is a prerequisite for billing customers in all three markets correctly.
+- **Extending the digitalised scope downstream.** Once quote acceptance is recorded, the natural next phases are order and invoice management and project handover to the technical team. Digitalising these phases would close the loop on the full sales lifecycle described in [Section 2.1](#21-as-is-process-overview).
+
+### 7.6 Operational and Compliance Readiness
+
+Moving from a working prototype to a system the business can rely on requires investment in the operational fundamentals:
+
+- Secrets management for API keys currently held in Make connections.
+- Monitoring and alerting on failed automations, so a broken integration is detected before it affects customers.
+- An audit log of quote and customer changes, supporting both internal governance and Swiss data protection requirements.
+- Role-based access control on the Camunda tasklist, aligned with the company's organisational structure.
+
+Taken together, these improvements move the prototype from a working proof-of-concept into a system that actively grows revenue, recovers lost opportunities, and gives sales management the visibility it currently lacks — without requiring changes to the architecture established by this project.
 
 Taken together, these improvements would move the prototype from a working proof-of-concept — which it already is — towards a deployable production system, without requiring changes to the overall architecture established by this project.
 

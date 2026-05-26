@@ -457,7 +457,50 @@ After the quote has been sent, the process reaches the "Confirm Quote Status" us
 - The process supports the creation of new quotes but not the revision of an existing quote. A revision would currently require creating a new quote.
 
 ---
+---
 
+## 6. Project Objectives Achieved
+
+The project set out to digitalise the first part of the AlpineTech Solutions sales process — from lead intake to quote creation — and to replace the fragmented, Excel- and email-based workflow with a centralised, automated pipeline. Measured against the outcomes defined in [Section 3](#3-project-objective), the prototype delivers on each of the targeted objectives.
+
+**Centralised, real-time lead tracking.** Leads are no longer scattered across individual Excel files. Every incoming request is written directly into a central PostgreSQL database, with customer and lead represented as separate, properly related entities. From the moment a form is submitted, the lead is visible to the entire sales team and owned by a single, authoritative record.
+
+**Automated lead assignment.** The manual triage previously performed by the Sales Manager has been replaced by an automated assignment step that ranks employees by region match, industry specialisation, and current workload. The decision is data-driven, immediate, and deterministic. The original objective referenced a DMN decision table; in practice a SQL-based ranking proved better suited to the problem, as it operates directly on live employee and workload data (see [Section 5.2](#52-choose-sales-representative-and-assign-lead) for the rationale).
+
+**Automated scheduling and follow-up safeguards.** Customers receive a personalised invitation email with a booking link to their assigned representative, eliminating the manual back-and-forth of proposing slots. The interrupting 14-day boundary timer ensures that unresponsive leads cannot stall the pipeline indefinitely — a class of failure that the AS-IS process had no defence against.
+
+**Structured quote generation.** Quotes are assembled from a predefined service catalog through a structured form, persisted with a sequential quote number, rendered as a professionally formatted PDF via CustomJS, and delivered automatically by email. Currency and VAT are derived from the customer's country rather than entered manually, removing a recurring source of inconsistency.
+
+**Full interaction history.** Every customer communication is logged in a central `communications` table and surfaced back into the representative's workflow on each loop iteration. The information loss that previously occurred when staff were absent or reassigned — a key pain point in the AS-IS analysis — is structurally prevented: any colleague can pick up a lead with complete context.
+
+Beyond the individual outcomes, the prototype demonstrates that the targeted scope is genuinely automatable with the chosen tooling. Camunda orchestrates the long-running workflow and human tasks; Make handles the integration glue to the database, Gmail, Cal.com, and CustomJS; the PostgreSQL database serves as the single source of truth. The boundary between human judgement (needs clarification, quote composition, outcome confirmation) and automated execution (persistence, assignment, document generation, delivery) is drawn deliberately, leaving representatives in control of decisions while removing the manual overhead around them.
+
+---
+
+## 7. Proposals for Next Improvements
+
+The prototype covers the targeted scope end-to-end, but several improvements would strengthen it for production use. The proposals below are grouped by theme and roughly ordered by expected impact.
+
+### 7.1 Intake and Scheduling
+
+- **Event-driven lead intake.** The current Google Forms trigger is polling-based, introducing up to ~15 minutes of latency between submission and process start. Replacing it with an Apps Script `onFormSubmit` handler that posts directly to a Make webhook would make intake effectively instantaneous. In a production deployment, the Google Form would be replaced by a form embedded in the company website posting to the same webhook — the integration pattern downstream would not change.
+- **Automated booking detection via Cal.com webhooks.** Today, the sales representative manually confirms a booking by completing a user task. A Cal.com webhook correlated to the running process instance (via the lead ID or customer email) would allow the booking to be detected automatically and the user task replaced by a message catch event. The surrounding process model already accommodates this substitution.
+- **Per-representative Cal.com calendars.** All representatives currently share a single Cal.com account, so booking links are cosmetically separated but availability is shared. Moving each representative to an independent calendar would resolve this and is a configuration change rather than a process change — only the `calcom_link` values in the `employee` table would be updated.
+- **Late-booking handling.** A booking that arrives *after* the 14-day timeout currently reaches the representative through Cal.com but lands on a closed lead. Treating such a late booking as a fresh inbound signal — starting a new process instance and linking it to the existing customer record — would close this edge case cleanly.
+
+### 7.2 Communication and Quoting
+
+- **Robust handling of multi-line communication notes.** Multi-line notes currently break the table rendering in the "Log Communication" form due to invalid JSON in the connector's response. A connector that exposes the raw response body for manual parsing, or a different form component that tolerates richer text, would lift the single-line restriction.
+- **Refresh the communication history within the quote sub-process.** The history shown in the quote form is fetched at the start of the sub-process and therefore omits the most recently logged communication. Re-fetching it immediately before the quote form is rendered would close this small gap.
+- **Quote revisions.** The process supports creating new quotes but not revising existing ones. A revision path that creates a new version of a quote while preserving the original (e.g. `Q-2026-0042-v2`) would reflect a common real-world need and avoid duplicate, unrelated records when a customer requests changes.
+- **Complete the international VAT logic.** The current implementation distinguishes Swiss customers from all others as a deliberate simplification. A production deployment would need to implement the full set of rules applicable to AlpineTech's markets (Switzerland, Germany, Austria), including B2B reverse-charge handling and validation of EU VAT IDs.
+
+### 7.3 Scope and Operations
+
+- **Extend the digitalised scope downstream.** The project focused on the highest-impact segment of the AS-IS process — intake through quote creation. Natural follow-on phases are: (a) the order and invoice phase after quote acceptance, (b) the project handover to the technical team, and (c) the sales reporting and pipeline dashboard for sales managers, which was identified as a pain point in [Section 2](#2-problem-description) but is outside the current scope. The central database already contains the structured data needed to power such reporting.
+- **Operational hardening.** For production use, a number of cross-cutting concerns deserve attention: secrets management for API keys currently held in Make connections; monitoring and alerting on failed Make scenarios; retry and dead-letter handling for transient integration failures; an audit log of quote and customer changes; and access control on the Camunda tasklist aligned with the company's roles.
+
+Taken together, these improvements would move the prototype from a working proof-of-concept — which it already is — towards a deployable production system, without requiring changes to the overall architecture established by this project.
 
 
 

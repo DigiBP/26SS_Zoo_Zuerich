@@ -117,29 +117,19 @@ These issues have resulted in several operational problems:
 
 To improve efficiency and support future growth, AlpineTech Solutions's management has decided to introduce a CRM system that centralizes sales data and automates key sales activities.
 
-### 2.1 AS-IS Process Overview
+## 2.1 AS-IS Process Overview
+The current sales process at AlpineTech Solutions involves two roles: the Sales Representative and the Customer. The process begins when a customer request is received on the corporate shared email. The Sales Representative manually registers the lead by writing down the client's contact information into a personal Excel file.
 
-The current sales process at AlpineTech Solutions involves three internal roles — **Sales Representative**, **Sales Manager**, and **Technical Team** — coordinating with the **Customer** through a shared corporate email inbox.
-
-**Process Flow:**
+### Process Flow:
 
 1. **Lead Registration** — A customer sends a request to the shared corporate email. The Sales Representative manually registers the lead by recording the client's contact details into a personal Excel file.
-
 2. **Needs Definition** — The Sales Representative contacts the client to clarify their requirements and determine whether the client is interested in proceeding.
-
-3. **Quote Creation** — If the client is interested, the Sales Representative manually creates a quote document in Word/Excel, which is then exported to PDF.
-
-4. **Quote Verification** — The quote is reviewed by the Sales Manager. If the quote is not approved, it is returned to the Sales Representative for updates. This loop continues until the quote is approved.
-
-5. **Quote Delivery** — The approved quote is sent to the client via Gmail.
-
-6. **Client Decision** — The client's response is received by email. The Sales Representative manually checks the answer:
-   - If the answer is **negative** — the client's row in Excel is marked red and the process ends (rejected).
-   - If the answer is **positive** — the Sales Representative prepares and sends an invoice via Gmail.
-
-7. **Project Handover** — The Sales Representative hands the project over to the Development Team. In parallel, the Technical Team creates and delivers the product to the client, while the system waits for the payment confirmation.
-
-8. **Completion** — Once the product is delivered and payment is received, the client's row in Excel is marked green and the process ends successfully (*Customer onboarded / Project complete*).
+3. **Decision: Proceed?** — If the client does not wish to go ahead, the lead is deleted from Excel and the request is rejected.
+4. **Quote Creation** — If the client is interested, the Sales Representative manually creates a quote in Word/Excel, which is exported to PDF and sent to the client via Gmail.
+5. **Client Decision** — The client's response is received by email. The Sales Representative manually checks the answer:
+   * If negative — the client's row in Excel is marked red and the process ends (rejected).
+   * If positive — the Sales Representative hands the project over to the Development Team.
+6. **Project Handover** — The process ends successfully (Customer onboarded / Project complete).
 
 **Tools currently used:**
 
@@ -150,14 +140,15 @@ The current sales process at AlpineTech Solutions involves three internal roles 
 | Communication | Shared corporate Gmail inbox |
 | Status tracking | Excel (manual color-coding: red = rejected, green = onboarded) |
 
-#### Key Limitations of the AS-IS Process
+### Key Limitations of the AS-IS Process
 
-- No centralised lead management — each Sales Representative maintains separate Excel files, leading to duplicates and data loss.
-- All communication is handled through a shared inbox with no history tracking, meaning information is lost when staff are reassigned or absent.
-- Quote and invoice preparation is entirely manual, consuming significant time and introducing inconsistencies.
-- There is no structured follow-up mechanism — if a client does not respond, there is no automated re-engagement path.
-- Sales Managers have no real-time pipeline visibility; status reporting requires manual consolidation from multiple spreadsheets.
-- Client status is tracked by manually changing cell colors in Excel, which is error-prone and unscalable.
+* **No centralized lead management.** All lead data is stored in individual Excel files with no shared visibility across the sales team, leading to duplicated efforts and data inconsistencies.
+* **Fully manual registration and tracking.** Every step — from lead entry to status updates — requires manual intervention by the Sales Representative, with no automation in place.
+* **No structured client needs documentation.** Client requirements are defined informally in conversations with no standardized form or structured data capture.
+* **Quote generation is manual and error-prone.** Quotes are created individually with no templates, pricing rules, or consistency checks.
+* **No interaction history.** Customer communication is handled through a shared inbox without a centralized record, meaning context is lost when representatives change or are absent.
+* **Primitive rejection handling.** Rejected leads are either deleted or color-coded in Excel, providing no audit trail or historical data for future analysis.
+* **No real-time pipeline visibility.** Sales managers cannot monitor deal progress in real time; any reporting requires manual compilation from individual files.
 
 #### AS-IS BPMN Diagram
 

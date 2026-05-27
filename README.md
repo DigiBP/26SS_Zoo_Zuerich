@@ -65,7 +65,7 @@
 
 ## How to Run and Test the Process
 
-The digitalized process spans several integrated systems (Camunda, Make, a PostgreSQL database, Google Forms, Cal.com, and CustomJS). The cloud integrations (Make scenarios, database) are already configured and live. Tofo llow the process end to end:
+The digitalized process spans several integrated systems (Camunda, Make, a PostgreSQL database, Google Forms, Cal.com, and CustomJS). The cloud integrations (Make scenarios, database) are already configured and live. To follow the process end to end:
 
 ### Triggering the process
 
